@@ -212,10 +212,18 @@ void MainLoop(){
 
 			if(MQTT_Ready){
 				//publish from flash
-				char mqtt_msg[150] = {0};
-				prepare_mqtt_msg(&new_reading, mqtt_msg);
-				//publish current data
-				//if failed-> stored to flash
+				//need to create function
+
+				if(MQTT_Ready){
+					//publish current data
+					char mqtt_msg[150] = {0};
+					prepare_mqtt_msg(&new_reading, mqtt_msg);
+					MQTT_Publish(PublishTopic, mqtt_msg, 0);
+				}
+
+				if(!MQTT_Ready){
+					//stored to flash
+				}
 			}else{
 				//stored to flash
 			}
