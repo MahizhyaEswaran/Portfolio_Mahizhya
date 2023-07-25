@@ -62,6 +62,7 @@ void StoretoFlash();
 uint8_t wakeup = 0;
 flash_queue_t flashqueue;
 int error = 100;
+extern int signalStrength;
 
 RTC_TimeTypeDef sTime;
 RTC_DateTypeDef sDate;
@@ -257,8 +258,55 @@ sensor_reading get_sensor_readings(){
 	return sensor;
 }
 
-void prepare_mqtt_msg(sensor_reading *sensor, char *msg){
+void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
+	int sensor_count = 0;
+	char data[30] = {0};
 
+	//SHT2x temperature
+	sprintf(data,"%d-T:%.2f;",sensor_count++, sensor->SHT2x_temp);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
+
+	//SHT2x relative humidity
+	sprintf(data,"%d-H:%.2f;",sensor_count++, sensor->SHT2x_rh);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
+
+	//soil moisture and EC
+	sprintf(data,"%d-MEA4:%03d/%03d;",sensor_count++, sensor->soil_moist, sensor->soil_ec);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
+
+	//irrometer reading
+	sprintf(data,"%d-IRO:%04d/%04d/%.2f;",sensor_count++, (int)sensor->irrometer.A1, (int)sensor->irrometer.A2, sensor->SHT2x_temp);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
+
+	//light intensity
+	sprintf(data,"%d-LIA1:%06d;",sensor_count++, (int)sensor->light);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
+
+	//soil temperature (DS18b20)
+	sprintf(data,"%d-ST:%.2f;",sensor_count++, sensor->DS18B20_temp);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
+
+	//device status
+	sprintf(data,"%d-B:%03d;%d-IT:%.2f;",sensor_count, sensor->battery,sensor_count+1, sensor->internal_temp);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
+	sensor_count+=2;
+
+	//signal strength
+	sprintf(data,"%d-SS:%02d;",sensor_count++, signalStrength);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
+
+	//power status
+	sprintf(data,"%d-PS:%d;",sensor_count++, sensor->power_status);
+	strncat(mqtt, data, strlen(data));
+	memset(data, 0, sizeof(data));
 }
 
 //void GetTime(){
