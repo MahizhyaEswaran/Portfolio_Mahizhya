@@ -91,7 +91,7 @@ int PublishPing(){
 }
 
 int PublishData(const char* topic, const char* message, uint16_t packetId, uint8_t qos, uint8_t retain){
-	unsigned char Packet[150] = { 0 };
+	unsigned char Packet[250] = { 0 };
 	int size = createMQTTPublishPacket(Packet, topic, message, packetId, qos, retain);
 
 	int err = Try_Send_MQTT1(Packet,size,publishReply,2,TIMEOUT_10s,2);

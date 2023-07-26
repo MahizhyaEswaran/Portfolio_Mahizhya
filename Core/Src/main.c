@@ -112,6 +112,8 @@ int main(void)
   flash_queue_init(&flashqueue);
 
   //for testing
+  int size1 = sizeof(sensor_reading);
+  int size2 = sizeof(flash_str);
   wakeup = 1;
 
   /* USER CODE END 2 */
@@ -197,6 +199,8 @@ void MainLoop(){
 		int battery = Read_Battery_Leval();
 		sensor_reading new_reading = {0};
 
+		//for testing
+		battery = 280;
 		if(battery >= 270){
 			//full process (read sensor and publish to server)
 			new_reading = get_sensor_readings();
@@ -209,6 +213,7 @@ void MainLoop(){
 				MQTT_Process();
 			}
 			get_time(&new_reading);
+			new_reading.signal_strength = signalStrength;
 
 			if(MQTT_Ready){
 				//publish from flash
