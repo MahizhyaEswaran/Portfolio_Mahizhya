@@ -30,6 +30,7 @@ int GSM_Module_Mode = 0;
 int TCP_state = 0;
 int TCP_Ready = 0;
 int signalStrength = 0;
+char timeZone[5] = {0};
 
 char APN[20] = {0};
 char MQTTServer[50] = {0};
@@ -215,6 +216,8 @@ void GetRTC(){
 			MinutesAT[1]=rtc[32];
 			SecondsAT[0]=rtc[34];
 			SecondsAT[1]=rtc[35];
+
+			sprintf(timeZone, strtok(&rtc[36], "\""));
 
 		  	sTime.Hours = atoi(HoursAT);
 		    sTime.Minutes = atoi(MinutesAT);

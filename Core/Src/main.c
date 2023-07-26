@@ -63,7 +63,6 @@ void publish_from_flash(int tries);
 uint8_t wakeup = 0;
 flash_queue_t flashqueue;
 int error = 100;
-extern int signalStrength;
 
 /* USER CODE END 0 */
 
@@ -289,7 +288,7 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 		memset(data, 0, sizeof(data));
 	}else{
 		sprintf(data,"ZZ:%02d%02d%02d%02d/%s|", sensor->timestamp.month, sensor->timestamp.day,
-				sensor->timestamp.hour, sensor->timestamp.min, "+22");
+				sensor->timestamp.hour, sensor->timestamp.min, timeZone);
 		strncat(mqtt, data, strlen(data));
 		memset(data, 0, sizeof(data));
 	}

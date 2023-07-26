@@ -18,6 +18,8 @@
 extern int GSM_Module_Ready;
 extern int TCP_state;
 extern int TCP_Ready;
+extern char timeZone[5];
+extern int signalStrength;
 
 void PowerToggle(void);
 void GSM_PowerControl(int input);
