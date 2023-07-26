@@ -55,7 +55,7 @@ sensor_reading get_sensor_readings();
 void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt);
 void get_time(sensor_reading *sensor);
 void store_to_flash(sensor_reading *sensor);
-void publish_from_flash();
+void publish_from_flash(int tries);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -200,7 +200,7 @@ void MainLoop(){
 		sensor_reading new_reading = {0};
 
 		//for testing
-		battery = 280;
+		battery = 275;
 		if(battery >= 270){
 			//full process (read sensor and publish to server)
 			new_reading = get_sensor_readings();
@@ -217,7 +217,7 @@ void MainLoop(){
 
 			if(MQTT_Ready){
 				//publish from flash
-				publish_from_flash();
+				publish_from_flash(2);
 
 				if(MQTT_Ready){
 					//publish current data
