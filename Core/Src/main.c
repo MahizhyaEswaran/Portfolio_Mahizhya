@@ -260,6 +260,7 @@ sensor_reading get_sensor_readings(){
 	sensor.internal_temp = Read_Internal_Temp();
 	sensor.battery = Read_Battery_Leval();
 	sensor.power_status = Read_Power_Status();
+	sensor.signal_strength = signalStrength;
 
 	SHT2x_Sensor_DeInit();
 	PowerDown_Sensors();
@@ -286,12 +287,12 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	memset(data, 0, sizeof(data));
 
 	//irrometer reading
-	sprintf(data,"%d-IRO:%04d/%04d/%.2f;",sensor_count++, (int)sensor->irrometer.A1, (int)sensor->irrometer.A2, sensor->SHT2x_temp);
+	sprintf(data,"%d-IRO:%04d/%04d/%.2f;",sensor_count++, sensor->irrometer.A1, sensor->irrometer.A2, sensor->SHT2x_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 
 	//light intensity
-	sprintf(data,"%d-LIA1:%06d;",sensor_count++, (int)sensor->light);
+	sprintf(data,"%d-LIA1:%06d;",sensor_count++, sensor->light);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 
@@ -307,7 +308,7 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	sensor_count+=2;
 
 	//signal strength
-	sprintf(data,"%d-SS:%02d;",sensor_count++, signalStrength);
+	sprintf(data,"%d-SS:%02d;",sensor_count++, sensor->signal_strength);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 

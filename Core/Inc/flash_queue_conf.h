@@ -7,13 +7,15 @@
 #ifndef INC_FLASH_QUEUE_CONF_H_
 #define INC_FLASH_QUEUE_CONF_H_
 
+#include <sensor_read.h>
+
 /*
  * Set the appropriate starting address of the flash for the application.
  * Note: This address does not correspond to the actual starting point of
  * 		 the STM32 Flash memory; rather, it indicates the desired location
  * 		 for storing the data.
  */
-#define FLASH_START 0x08010000
+#define FLASH_START 0x0801C000
 
 /*
  * Structure to hold the flash data, Modify the 'flash_str' structure
@@ -23,8 +25,8 @@
  * 			  fault breakpoint in the application.
  */
 typedef struct FlashStr {
-    char topic[52];
-    char data[100];
+    sensor_reading sensor;
+    date_time timestamp;
 } flash_str;
 
 #endif /* INC_FLASH_QUEUE_CONF_H_ */

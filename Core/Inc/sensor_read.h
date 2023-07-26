@@ -24,24 +24,32 @@
 
 //Irrometer Output Structure
 typedef struct {
-    double A1;
-    double A2;
-    int X;
+    uint16_t A1;
+    uint16_t A2;
+    uint16_t X;
 } irro_reading;
 
 //total sensor data Structure
 typedef struct SensorReading {
 	float SHT2x_temp;
 	float SHT2x_rh;
-	int soil_moist;
-	int soil_ec;
+	uint16_t soil_moist;
+	uint16_t soil_ec;
 	irro_reading irrometer;
-	float light;
+	uint16_t light;
 	float DS18B20_temp;
 	float internal_temp;
 	uint16_t battery;
 	uint8_t power_status;
+	uint8_t signal_strength;
 } sensor_reading;
+
+typedef struct DateAndTime {
+	uint8_t month;
+	uint8_t day;
+	uint8_t hour;
+	uint8_t min;
+}date_time;
 
 /*Environmental Sensor Setup*/
 void PowerUp_Sensors();
@@ -56,7 +64,7 @@ float Read_RH_SHT2x();
 int Read_Soil_Moisture();
 int Read_Soil_EC();
 irro_reading Read_Irrometer(int num_of_read);
-float Read_Light_BH1750();
+uint16_t Read_Light_BH1750();
 float Read_Temp_DS18B20();
 /*End of Environmental Sensor Readings*/
 

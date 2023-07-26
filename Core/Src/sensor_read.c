@@ -137,16 +137,16 @@ irro_reading Read_Irrometer(int num_of_read){
 	HAL_GPIO_WritePin(MUX1_3_GPIO_Port, MUX1_3_Pin, GPIO_PIN_RESET);
 	HAL_Delay(1000);
 
-	data.A1 = ARead_A1;
-	data.A2 = ARead_A2;
-	data.X = X_val;
+	data.A1 = (uint16_t)ARead_A1;
+	data.A2 = (uint16_t)ARead_A2;
+	data.X = (uint16_t)X_val;
 	HAL_ADC_DeInit(&hadc);
 
 	return data;
 }
 
 //Read light intensity using BH1750 sensor
-float Read_Light_BH1750(){
+uint16_t Read_Light_BH1750(){
 	HAL_I2C_Init(&hi2c2);
 	float light_f = 0;
 	BH1750_Init(&hi2c2);
@@ -155,7 +155,7 @@ float Read_Light_BH1750(){
 	BH1750_ReadLight(&light_f);
 	HAL_Delay(1000);
 	HAL_I2C_DeInit(&hi2c2);
-	return light_f;
+	return (uint16_t)light_f;
 }
 
 //Read environmental temperature using DS18B20 sensor
