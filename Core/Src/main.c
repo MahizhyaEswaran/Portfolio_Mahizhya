@@ -112,8 +112,8 @@ int main(void)
   flash_queue_init(&flashqueue);
 
   //for testing
-  int size1 = sizeof(sensor_reading);
-  int size2 = sizeof(flash_str);
+//  int size1 = sizeof(sensor_reading);
+//  int size2 = sizeof(flash_str);
   wakeup = 1;
 
   /* USER CODE END 2 */
@@ -282,7 +282,8 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	char data[30] = {0};
 
 	//date and time
-	if(!(sensor->timestamp.month && sensor->timestamp.day)){
+	if(((sensor->timestamp.month == 1) && (sensor->timestamp.day == 1)
+			&& (sensor->timestamp.hour == 0) && (sensor->timestamp.min == 0))){
 		sprintf(data,"DT:0|");
 		strncat(mqtt, data, strlen(data));
 		memset(data, 0, sizeof(data));
