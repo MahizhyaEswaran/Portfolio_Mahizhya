@@ -29,6 +29,14 @@ typedef struct {
     uint16_t X;
 } irro_reading;
 
+//structure to store time stamp
+typedef struct DateAndTime {
+	uint8_t month;
+	uint8_t day;
+	uint8_t hour;
+	uint8_t min;
+}date_time;
+
 //total sensor data Structure
 typedef struct SensorReading {
 	float SHT2x_temp;
@@ -38,18 +46,12 @@ typedef struct SensorReading {
 	irro_reading irrometer;
 	uint16_t light;
 	float DS18B20_temp;
-	float internal_temp;
+	uint8_t internal_temp;
 	uint16_t battery;
 	uint8_t power_status;
 	uint8_t signal_strength;
+    date_time timestamp;
 } sensor_reading;
-
-typedef struct DateAndTime {
-	uint8_t month;
-	uint8_t day;
-	uint8_t hour;
-	uint8_t min;
-}date_time;
 
 /*Environmental Sensor Setup*/
 void PowerUp_Sensors();
@@ -69,7 +71,7 @@ float Read_Temp_DS18B20();
 /*End of Environmental Sensor Readings*/
 
 /*Device Status Reading*/
-float Read_Internal_Temp();
+uint8_t Read_Internal_Temp();
 int Read_Battery_Leval();
 int Read_Power_Status();
 /*End of Device Status Readings*/

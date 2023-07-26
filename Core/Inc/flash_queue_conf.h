@@ -26,7 +26,6 @@
  */
 typedef struct FlashStr {
     sensor_reading sensor;
-    date_time timestamp;
 } flash_str;
 
 #endif /* INC_FLASH_QUEUE_CONF_H_ */

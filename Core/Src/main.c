@@ -52,9 +52,10 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void MainLoop();
 sensor_reading get_sensor_readings();
-void prepare_mqtt_msg(sensor_reading *sensor, char *msg);
-void GetTime();
-void StoretoFlash();
+void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt);
+void get_time(sensor_reading *sensor);
+void store_to_flash(sensor_reading *sensor);
+void publish_from_flash();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -64,8 +65,6 @@ flash_queue_t flashqueue;
 int error = 100;
 extern int signalStrength;
 
-RTC_TimeTypeDef sTime;
-RTC_DateTypeDef sDate;
 /* USER CODE END 0 */
 
 /**
@@ -84,7 +83,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-//  HAL_InitTick(1);
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -209,10 +208,11 @@ void MainLoop(){
 				//connection failed
 				MQTT_Process();
 			}
+			get_time(&new_reading);
 
 			if(MQTT_Ready){
 				//publish from flash
-				//need to create function
+				publish_from_flash();
 
 				if(MQTT_Ready){
 					//publish current data
@@ -223,9 +223,11 @@ void MainLoop(){
 
 				if(!MQTT_Ready){
 					//stored to flash
+					store_to_flash(&new_reading);
 				}
 			}else{
 				//stored to flash
+				store_to_flash(&new_reading);
 			}
 
 			HAL_UART_DeInit(&huart1);
@@ -234,6 +236,7 @@ void MainLoop(){
 			//only sensor reading
 			new_reading = get_sensor_readings();
 			//store on the flash
+			store_to_flash(&new_reading);
 		}
 	}
 
@@ -262,6 +265,8 @@ sensor_reading get_sensor_readings(){
 	sensor.power_status = Read_Power_Status();
 	sensor.signal_strength = signalStrength;
 
+	get_time(&sensor);
+
 	SHT2x_Sensor_DeInit();
 	PowerDown_Sensors();
 	return sensor;
@@ -270,6 +275,18 @@ sensor_reading get_sensor_readings(){
 void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	int sensor_count = 0;
 	char data[30] = {0};
+
+	//date and time
+	if(!(sensor->timestamp.month && sensor->timestamp.day)){
+		sprintf(data,"DT:0|");
+		strncat(mqtt, data, strlen(data));
+		memset(data, 0, sizeof(data));
+	}else{
+		sprintf(data,"ZZ:%02d%02d%02d%02d/%s|", sensor->timestamp.month, sensor->timestamp.day,
+				sensor->timestamp.hour, sensor->timestamp.min, "+22");
+		strncat(mqtt, data, strlen(data));
+		memset(data, 0, sizeof(data));
+	}
 
 	//SHT2x temperature
 	sprintf(data,"%d-T:%.2f;",sensor_count++, sensor->SHT2x_temp);
@@ -302,7 +319,7 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	memset(data, 0, sizeof(data));
 
 	//device status
-	sprintf(data,"%d-B:%03d;%d-IT:%.2f;",sensor_count, sensor->battery,sensor_count+1, sensor->internal_temp);
+	sprintf(data,"%d-B:%03d;%d-IT:%02d;",sensor_count, sensor->battery,sensor_count+1, sensor->internal_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 	sensor_count+=2;
@@ -318,17 +335,45 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	memset(data, 0, sizeof(data));
 }
 
-//void GetTime(){
-//	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-//	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-//}
-//
-//#ifdef FLASH_BACKUP
-//void StoretoFlash(){
-//
-//}
-//#endif
+void get_time(sensor_reading *sensor){
+	RTC_TimeTypeDef sTime;
+	RTC_DateTypeDef sDate;
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
+	sensor->timestamp.month = sDate.Month;
+	sensor->timestamp.day = sDate.Date;
+	sensor->timestamp.hour = sTime.Hours;
+	sensor->timestamp.min = sTime.Minutes;
+}
+
+void store_to_flash(sensor_reading *sensor){
+	flash_str new = {0};
+	new.sensor = *sensor;
+	flash_enqueue(&flashqueue, &new);
+	HAL_Delay(1);
+}
+
+void publish_from_flash(int tries){
+	while(flash_queue_count(&flashqueue) && tries){
+		flash_str data = {0};
+		flash_peek(&flashqueue, &data);
+
+		char mqtt_msg[150] = {0};
+		prepare_mqtt_msg(&data.sensor, mqtt_msg);
+
+		if(MQTT_Publish(PublishTopic, mqtt_msg, 0)){
+			flash_dequeue(&flashqueue, &data);
+		}else{
+			//publish failed
+			tries--;
+			if(!tries){
+				break;
+			}
+			MQTT_Process();
+		}
+	}
+}
 
 /* USER CODE END 4 */
 

@@ -170,7 +170,7 @@ float Read_Temp_DS18B20(){
 /*End of Environmental Sensor Readings*/
 
 /*Device Status Readings*/
-float Read_Internal_Temp(){
+uint8_t Read_Internal_Temp(){
 	HAL_ADC_Init(&hadc);	// initializing ADC peripheral
 	ADC1->CFGR1  |=  ADC_CFGR1_CONT;	// set ADC peripheral to continuous mode
 	ADC1->CHSELR  =  ADC_CHSELR_CHSEL18;	// select channel for conversion
@@ -188,7 +188,7 @@ float Read_Internal_Temp(){
 	temperature  =  temperature  *  (int32_t)(130  -  30);
 	temperature  =  temperature  /  (int32_t)(*TEMP130_CAL_ADDR - *TEMP30_CAL_ADDR);
 	temperature  =  temperature  +  30;
-	return temperature;
+	return (uint8_t)temperature;
 }
 
 int Read_Battery_Leval(){
