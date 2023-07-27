@@ -120,6 +120,11 @@ int GSM_ON(){
 void GSM_OFF(){
 	PowerToggle();
 	GSM_PowerControl(1);
+	GSM_Module_Ready = 0;
+	GSM_Module_Mode = 0;
+	TCP_state = 0;
+	TCP_Ready = 0;
+	MQTT_Ready = 0;
 }
 
 void GSM_Init(const char* apn, const char* mqttserver){
