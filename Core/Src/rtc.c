@@ -21,6 +21,8 @@
 #include "rtc.h"
 
 /* USER CODE BEGIN 0 */
+#include <app_conf.h>
+
 int RTC_OK = 0;
 /* USER CODE END 0 */
 
@@ -90,7 +92,7 @@ void MX_RTC_Init(void)
   /* USER CODE BEGIN RTC_Init 2 */
   //Enable the WakeUp
   HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
-  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 60*3, RTC_WAKEUPCLOCK_CK_SPRE_16BITS) != HAL_OK)
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 60*WAKEUP_TIME, RTC_WAKEUPCLOCK_CK_SPRE_16BITS) != HAL_OK)
   {
     Error_Handler();
   }

@@ -19,14 +19,15 @@
 #define USER "user"
 #define PASS "user@pass"
 #define KEEP_ALIVE 255
-#define PING_TIME 30
+#define PING_TIME 0
 
 #define PublishTopic "D2S/SA/V1/dev_anistus_t1/S"
-
 /*--------------------END of MQTT ConFiguration-------------------*/
 
 
 /*---------------------Main Flow ConFiguration--------------------*/
+#define WAKEUP_TIME 2	//time in minutes
+
 //If flash storage is required, please uncomment the line below.
 #define FLASH_BACKUP
 
