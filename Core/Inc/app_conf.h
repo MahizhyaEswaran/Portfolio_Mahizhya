@@ -26,7 +26,7 @@
 
 
 /*---------------------Main Flow ConFiguration--------------------*/
-#define WAKEUP_TIME 2	//time in minutes
+#define WAKEUP_TIME 3	//time in minutes
 
 //If flash storage is required, please uncomment the line below.
 #define FLASH_BACKUP
