@@ -211,10 +211,10 @@ void MainLoop(){
 				//connection failed
 				MQTT_Process();
 			}
-			get_time(&new_reading);
-			new_reading.signal_strength = signalStrength;
 
 			if(MQTT_Ready){
+				get_time(&new_reading);
+				new_reading.signal_strength = signalStrength;
 				//publish from flash
 				publish_from_flash(2);
 
