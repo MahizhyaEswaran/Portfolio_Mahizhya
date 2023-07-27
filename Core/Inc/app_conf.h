@@ -25,19 +25,23 @@
 /*--------------------END of MQTT ConFiguration-------------------*/
 
 
+/*----------------------Sensor ConFiguration----------------------*/
+#define SHT2x_Temp_EN
+#define SHT2x_RH_EN
+#define Moist_EN
+#define EC_EN
+#define Irro_EN
+#define Light_EN
+#define DS18B20_Temp_EN
+#define Power_status_EN
+/*-------------------END of Sensor ConFiguration------------------*/
+
+
 /*---------------------Main Flow ConFiguration--------------------*/
 #define WAKEUP_TIME 3	//time in minutes
 
 //If flash storage is required, please uncomment the line below.
 #define FLASH_BACKUP
-
-//If ACK is required for LoRa communication,
-//please select the appropriate mode below.
-#define ACK_CALLBACK	//send ACK from LoRa Receive Callback
-//#define ACK_QUEUE		//send ACK in main loop using queue
-
-//If CRC is sent from the slave, please enable CRC processing below
-#define CRC_EN
 /*-----------------END of Main Flow ConFiguration-----------------*/
 
 /*
@@ -45,12 +49,20 @@
  * Do not make any alterations or modifications below this line.
  */
 
-#if defined(ACK_CALLBACK) + defined(ACK_QUEUE) > 1
-    #error "Cannot select multiple ACK mode"
+#if defined(Moist_EN) + defined(EC_EN)  == 1
+    #error "Must select the moisture and EC sensors together."
 #endif
 
-#if defined ACK_CALLBACK || defined ACK_QUEUE
-#define LORA_ACK
+#if defined(Moist_EN) && defined(EC_EN)
+#define Moist_EC_EN
+#endif
+
+#if defined(SHT2x_Temp_EN) || defined(SHT2x_RH_EN)
+#define SHT2x_EN
+#endif
+
+#if defined(Irro_EN) && !defined(SHT2x_Temp_EN)
+    #error "Must select the SHT2x temperature sensors together with Irrometer."
 #endif
 
 #endif /* INC_APP_CONF_H_ */

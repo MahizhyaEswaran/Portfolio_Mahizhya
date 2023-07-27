@@ -6,11 +6,19 @@
  */
 
 #include <sensor_read.h>
+#include <app_conf.h>
 
+#ifdef SHT2x_EN
 #include "sht2x_for_stm32_hal.h"
-#include "bh1750.h"
-#include "OneWire.h"
+#endif
 
+#ifdef Light_EN
+#include "bh1750.h"
+#endif
+
+#ifdef DS18B20_Temp_EN
+#include "OneWire.h"
+#endif
 
 /*Environmental Sensor Setup*/
 void PowerUp_Sensors(){
@@ -20,6 +28,8 @@ void PowerUp_Sensors(){
 void PowerDown_Sensors(){
 	HAL_GPIO_WritePin(Sensor_PWR_GPIO_Port, Sensor_PWR_Pin, SET);
 }
+
+#ifdef SHT2x_EN
 //Initialize SHT2x sensor
 void SHT2x_Sensor_Init(){
 	HAL_I2C_Init(&hi2c1);
@@ -31,19 +41,25 @@ void SHT2x_Sensor_Init(){
 void SHT2x_Sensor_DeInit(){
 	HAL_I2C_DeInit(&hi2c1);
 }
+#endif
 /*End of Environmental Sensor Setup*/
 
 /*Environmental Sensor Readings*/
+#ifdef SHT2x_Temp_EN
 //Read environmental temperature using SHT2x sensor
 float Read_Temp_SHT2x(){
 	return SHT2x_GetTemperature(1);
 }
+#endif
 
+#ifdef SHT2x_RH_EN
 //Read environmental relative humidity using SHT2x sensor
 float Read_RH_SHT2x(){
 	return SHT2x_GetRelativeHumidity(1);
 }
+#endif
 
+#ifdef Moist_EC_EN
 //Real soil moisture using sensor connected to ADC
 int Read_Soil_Moisture(){
 	HAL_ADC_Init(&hadc);
@@ -76,7 +92,9 @@ int Read_Soil_EC(){
 	HAL_ADC_DeInit(&hadc);
 	return ec;
 }
+#endif
 
+#ifdef Irro_EN
 //Read Irrometer Reading
 irro_reading Read_Irrometer(int num_of_read){
 	HAL_ADC_Init(&hadc);
@@ -144,7 +162,9 @@ irro_reading Read_Irrometer(int num_of_read){
 
 	return data;
 }
+#endif
 
+#ifdef Light_EN
 //Read light intensity using BH1750 sensor
 uint16_t Read_Light_BH1750(){
 	HAL_I2C_Init(&hi2c2);
@@ -157,7 +177,9 @@ uint16_t Read_Light_BH1750(){
 	HAL_I2C_DeInit(&hi2c2);
 	return (uint16_t)light_f;
 }
+#endif
 
+#ifdef DS18B20_Temp_EN
 //Read environmental temperature using DS18B20 sensor
 float Read_Temp_DS18B20(){
 	float temp = 0;
@@ -167,6 +189,7 @@ float Read_Temp_DS18B20(){
 	HAL_UART_DeInit(&huart2);
 	return temp;
 }
+#endif
 /*End of Environmental Sensor Readings*/
 
 /*Device Status Readings*/

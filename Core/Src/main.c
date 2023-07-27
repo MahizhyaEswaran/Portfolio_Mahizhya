@@ -253,25 +253,43 @@ void MainLoop(){
 
 sensor_reading get_sensor_readings(){
 	PowerUp_Sensors();
+#ifdef SHT2x_EN
 	SHT2x_Sensor_Init();
+#endif
 	HAL_Delay(5000);
 
 	sensor_reading sensor = {0};
-	sensor.SHT2x_temp = Read_Temp_SHT2x();;
+#ifdef SHT2x_Temp_EN
+	sensor.SHT2x_temp = Read_Temp_SHT2x();
+#endif
+#ifdef SHT2x_RH_EN
 	sensor.SHT2x_rh = Read_RH_SHT2x();
+#endif
+#ifdef Moist_EC_EN
 	sensor.soil_moist = Read_Soil_Moisture();
 	sensor.soil_ec = Read_Soil_EC();
+#endif
+#ifdef Irro_EN
 	sensor.irrometer = Read_Irrometer(3);
+#endif
+#ifdef Light_EN
 	sensor.light = Read_Light_BH1750();
+#endif
+#ifdef DS18B20_Temp_EN
 	sensor.DS18B20_temp = Read_Temp_DS18B20();
+#endif
 	sensor.internal_temp = Read_Internal_Temp();
 	sensor.battery = Read_Battery_Leval();
+#ifdef Power_status_EN
 	sensor.power_status = Read_Power_Status();
+#endif
 	sensor.signal_strength = signalStrength;
 
 	get_time(&sensor);
 
+#ifdef SHT2x_EN
 	SHT2x_Sensor_DeInit();
+#endif
 	PowerDown_Sensors();
 	return sensor;
 }
@@ -293,35 +311,47 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 		memset(data, 0, sizeof(data));
 	}
 
+#ifdef SHT2x_Temp_EN
 	//SHT2x temperature
 	sprintf(data,"%d-T:%.2f;",sensor_count++, sensor->SHT2x_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
+#endif
 
+#ifdef SHT2x_RH_EN
 	//SHT2x relative humidity
 	sprintf(data,"%d-H:%.2f;",sensor_count++, sensor->SHT2x_rh);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
+#endif
 
+#ifdef Moist_EC_EN
 	//soil moisture and EC
 	sprintf(data,"%d-MEA4:%03d/%03d;",sensor_count++, sensor->soil_moist, sensor->soil_ec);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
+#endif
 
+#ifdef Irro_EN
 	//irrometer reading
 	sprintf(data,"%d-IRO:%04d/%04d/%.2f;",sensor_count++, sensor->irrometer.A1, sensor->irrometer.A2, sensor->SHT2x_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
+#endif
 
+#ifdef Light_EN
 	//light intensity
 	sprintf(data,"%d-LIA1:%06d;",sensor_count++, sensor->light);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
+#endif
 
+#ifdef DS18B20_Temp_EN
 	//soil temperature (DS18b20)
 	sprintf(data,"%d-ST:%.2f;",sensor_count++, sensor->DS18B20_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
+#endif
 
 	//device status
 	sprintf(data,"%d-B:%03d;%d-IT:%02d;",sensor_count, sensor->battery,sensor_count+1, sensor->internal_temp);
@@ -334,10 +364,12 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 
+#ifdef Power_status_EN
 	//power status
 	sprintf(data,"%d-PS:%d;",sensor_count++, sensor->power_status);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
+#endif
 }
 
 void get_time(sensor_reading *sensor){
