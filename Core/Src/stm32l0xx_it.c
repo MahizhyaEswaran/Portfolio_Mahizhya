@@ -42,7 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-extern wakeup;
+extern uint8_t wakeup;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
