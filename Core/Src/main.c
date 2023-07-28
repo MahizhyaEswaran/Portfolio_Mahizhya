@@ -299,7 +299,7 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	char data[30] = {0};
 
 	//date and time
-	if(((sensor->timestamp.month == 1) && (sensor->timestamp.day == 1)
+	if(((sensor->timestamp.month == 0) && (sensor->timestamp.day == 0)
 			&& (sensor->timestamp.hour == 0) && (sensor->timestamp.min == 0))){
 		sprintf(data,"DT:0|");
 		strncat(mqtt, data, strlen(data));
@@ -378,10 +378,17 @@ void get_time(sensor_reading *sensor){
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
-	sensor->timestamp.month = sDate.Month;
-	sensor->timestamp.day = sDate.Date;
-	sensor->timestamp.hour = sTime.Hours;
-	sensor->timestamp.min = sTime.Minutes;
+	if( (!RTC_OK) && (sDate.Year < 22) ){
+		sensor->timestamp.month = 0;
+		sensor->timestamp.day = 0;
+		sensor->timestamp.hour = 0;
+		sensor->timestamp.min = 0;
+	}else{
+		sensor->timestamp.month = sDate.Month;
+		sensor->timestamp.day = sDate.Date;
+		sensor->timestamp.hour = sTime.Hours;
+		sensor->timestamp.min = sTime.Minutes;
+	}
 }
 
 void store_to_flash(sensor_reading *sensor){
