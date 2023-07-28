@@ -109,12 +109,7 @@ int main(void)
   HAL_I2C_DeInit(&hi2c2);
 
   flash_queue_init(&flashqueue);
-
-  //for testing
-//  int size1 = sizeof(sensor_reading);
-//  int size2 = sizeof(flash_str);
   wakeup = 1;
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
