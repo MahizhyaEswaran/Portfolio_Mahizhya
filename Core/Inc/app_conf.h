@@ -65,4 +65,12 @@
     #error "Must select the SHT2x temperature sensors together with Irrometer."
 #endif
 
+#if defined(SHT2x_EN) + defined(Moist_EC_EN) + defined(Irro_EN) + defined(Light_EN) + defined(DS18B20_Temp_EN)  == 0
+    #error "Choose at least one sensor."
+#endif
+
+#if defined(Moist_EC_EN) && !defined(SHT2x_EN) && !defined(Irro_EN) && !defined(Light_EN) && !defined(DS18B20_Temp_EN)
+#define Moist_EC_ONLY
+#endif
+
 #endif /* INC_APP_CONF_H_ */

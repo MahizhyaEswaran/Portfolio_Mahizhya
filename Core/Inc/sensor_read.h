@@ -22,6 +22,8 @@
 #include "usart.h"
 #include "gpio.h"
 
+#include <app_conf.h>
+
 //Irrometer Output Structure
 typedef struct {
     uint16_t A1;
@@ -39,18 +41,33 @@ typedef struct DateAndTime {
 
 //total sensor data Structure
 typedef struct SensorReading {
+#ifdef SHT2x_Temp_EN
 	float SHT2x_temp;
+#endif
+#ifdef SHT2x_RH_EN
 	float SHT2x_rh;
+#endif
+#ifdef Moist_EC_EN
 	uint16_t soil_moist;
 	uint16_t soil_ec;
+#endif
+#ifdef Irro_EN
 	irro_reading irrometer;
+#endif
+#ifdef Light_EN
 	uint16_t light;
+#endif
+#ifdef DS18B20_Temp_EN
 	float DS18B20_temp;
+#endif
 	uint8_t internal_temp;
 	uint16_t battery;
 	uint8_t power_status;
 	uint8_t signal_strength;
     date_time timestamp;
+#ifdef Moist_EC_ONLY
+    uint16_t padding;
+#endif
 } sensor_reading;
 
 /*Environmental Sensor Setup*/

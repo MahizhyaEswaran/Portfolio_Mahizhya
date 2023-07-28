@@ -6,7 +6,6 @@
  */
 
 #include <sensor_read.h>
-#include <app_conf.h>
 
 #ifdef SHT2x_EN
 #include "sht2x_for_stm32_hal.h"
