@@ -202,10 +202,12 @@ void MainLoop(){
 			HAL_UART_Init(&huart1);
 			MQTT_Init(APN, MQTT, MQTT_ID, USER, PASS, KEEP_ALIVE, PING_TIME);
 			error = MQTT_Connect();
+#ifdef EXTRA_MQTT_CON_TRY
 			if(error <= 0){
 				//connection failed
 				MQTT_Process();
 			}
+#endif
 
 			if(MQTT_Ready){
 				get_time(&new_reading);

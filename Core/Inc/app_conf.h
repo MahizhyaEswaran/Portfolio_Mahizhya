@@ -38,10 +38,11 @@
 
 
 /*---------------------Main Flow ConFiguration--------------------*/
-#define WAKEUP_TIME 3	//time in minutes
+#define WAKEUP_TIME 5	//time in minutes
 
-//If flash storage is required, please uncomment the line below.
-#define FLASH_BACKUP
+//Set it if you need an extra connection attempt after the initial
+//connection attempt fails.
+//#define EXTRA_MQTT_CON_TRY
 /*-----------------END of Main Flow ConFiguration-----------------*/
 
 /*
