@@ -18,9 +18,30 @@ int config_rm_block_init(RM_ConfigBlock *q) {
 		memset(q, 0 , sizeof(RM_ConfigBlock));
 		q->block_start = 17;
 		q->block_end = 8;
+		set_rm_default(q);
 		save_rm_config_block(q);
 		return 2;
 	}
+}
+
+//Set the block with default Config
+void set_rm_default(RM_ConfigBlock *q){
+	sprintf(q->apn, "%s", APN);
+	sprintf(q->mqtt_host, "%s", MQTT_HOST);
+	sprintf(q->mqtt_username, "%s", MQTT_USER);
+	sprintf(q->mqtt_password, "%s", MQTT_PASS);
+#ifdef PublishTopic
+	sprintf(q->mqtt_pub_topic, "%s", PublishTopic);
+#endif
+#ifdef SubscribeTopic
+	sprintf(q->mqtt_sub_topic, "%s", SubscribeTopic);
+#endif
+#ifdef RmConfTopic
+	sprintf(q->mqtt_rm_conf_topic, "%s", RmConfTopic);
+#endif
+	q->mqtt_port = MQTT_PORT;
+	q->data_publish_period = WAKEUP_TIME;
+	q->rm_config_check_period = CONFIG_PERIOD;
 }
 
 // Store config block to flash

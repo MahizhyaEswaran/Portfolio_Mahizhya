@@ -200,7 +200,7 @@ void MainLoop(){
 			new_reading = get_sensor_readings();
 
 			HAL_UART_Init(&huart1);
-			MQTT_Init(APN, MQTT, MQTT_ID, USER, PASS, KEEP_ALIVE, PING_TIME);
+			MQTT_Init(APN, MQTT_HOST, MQTT_ID, MQTT_USER, MQTT_PASS, KEEP_ALIVE, PING_TIME);
 			error = MQTT_Connect();
 #ifdef EXTRA_MQTT_CON_TRY
 			if(error <= 0){
