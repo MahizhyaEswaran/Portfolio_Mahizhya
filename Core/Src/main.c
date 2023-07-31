@@ -22,7 +22,7 @@
 #include <flash_queue.h>
 #include <app_conf.h>
 #include <sensor_read.h>
-
+#include <rm_config_block.h>
 
 /* USER CODE END Includes */
 

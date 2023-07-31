@@ -15,13 +15,14 @@
 /*-----------------------MQTT ConFiguration-----------------------*/
 #define APN ""
 #define MQTT "52.24.122.165"
-#define MQTT_ID "dev_anistus_t1"
+#define MQTT_ID "dev_anistus_t2"
 #define USER "user"
 #define PASS "user@pass"
 #define KEEP_ALIVE 255
 #define PING_TIME 0
 
-#define PublishTopic "D2S/SA/V1/dev_anistus_t1/S"
+#define PublishTopic "D2S/SA/V1/dev_anistus_t2/S"
+#define SubscribeTopic "S2D/SA/V1/dev_anistus_t2/#"
 /*--------------------END of MQTT ConFiguration-------------------*/
 
 
