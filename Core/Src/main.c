@@ -90,7 +90,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-	//
+  error = config_rm_block_init(&rm_config);
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -110,7 +110,6 @@ int main(void)
   HAL_I2C_DeInit(&hi2c2);
 
   flash_queue_init(&flashqueue);
-  error = config_rm_block_init(&rm_config);
   wakeup = 1;
   /* USER CODE END 2 */
 
