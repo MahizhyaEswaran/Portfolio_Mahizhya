@@ -28,6 +28,7 @@ int config_rm_block_init(RM_ConfigBlock *q) {
 void set_rm_default(RM_ConfigBlock *q){
 	sprintf(q->apn, "%s", APN);
 	sprintf(q->mqtt_host, "%s", MQTT_HOST);
+	sprintf(q->mqtt_id, "%s", MQTT_ID);
 	sprintf(q->mqtt_username, "%s", MQTT_USER);
 	sprintf(q->mqtt_password, "%s", MQTT_PASS);
 #ifdef PublishTopic

@@ -63,6 +63,7 @@ void publish_from_flash(int tries);
 uint8_t wakeup = 0;
 flash_queue_t flashqueue;
 int error = 100;
+RM_ConfigBlock rm_config = {0};
 
 /* USER CODE END 0 */
 
@@ -109,6 +110,7 @@ int main(void)
   HAL_I2C_DeInit(&hi2c2);
 
   flash_queue_init(&flashqueue);
+  error = config_rm_block_init(&rm_config);
   wakeup = 1;
   /* USER CODE END 2 */
 
@@ -200,7 +202,7 @@ void MainLoop(){
 			new_reading = get_sensor_readings();
 
 			HAL_UART_Init(&huart1);
-			MQTT_Init(APN, MQTT_HOST, MQTT_ID, MQTT_USER, MQTT_PASS, KEEP_ALIVE, PING_TIME);
+			MQTT_Init(rm_config.apn, rm_config.mqtt_host, rm_config.mqtt_id, rm_config.mqtt_username, rm_config.mqtt_password, KEEP_ALIVE, PING_TIME);
 			error = MQTT_Connect();
 #ifdef EXTRA_MQTT_CON_TRY
 			if(error <= 0){
@@ -219,7 +221,7 @@ void MainLoop(){
 					//publish current data
 					char mqtt_msg[150] = {0};
 					prepare_mqtt_msg(&new_reading, mqtt_msg);
-					MQTT_Publish(PublishTopic, mqtt_msg, 0);
+					MQTT_Publish(rm_config.mqtt_pub_topic, mqtt_msg, 0);
 				}
 
 				if(!MQTT_Ready){
@@ -403,7 +405,7 @@ void publish_from_flash(int tries){
 		char mqtt_msg[150] = {0};
 		prepare_mqtt_msg(&data.sensor, mqtt_msg);
 
-		if(MQTT_Publish(PublishTopic, mqtt_msg, 0)){
+		if(MQTT_Publish(rm_config.mqtt_pub_topic, mqtt_msg, 0)){
 			flash_dequeue(&flashqueue, &data);
 		}else{
 			//publish failed

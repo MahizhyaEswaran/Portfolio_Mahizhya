@@ -17,6 +17,7 @@
 typedef struct RM_ConfigBlock {
 	uint8_t block_start;
     char mqtt_host[50];
+    char mqtt_id[20];
     uint16_t mqtt_port;
     char apn[20];
     char mqtt_username[20];
