@@ -31,7 +31,7 @@ int PublishPing();
 int PublishData(const char* topic, const char* message, uint16_t packetId, uint8_t qos, uint8_t retain);
 int MQTT_Subscribe(Mqtt_sub_str *data);
 int MQTT_Publish(const char* topic, const char* message, uint8_t retain);
-void MQTT_Init(const char* apn, const char* mqttserver, const char* clientId, const char* username, const char* password, int keepAliveTimer, int pingInterval);
+void MQTT_Init(const char* apn, const char* mqttserver, uint16_t port, const char* Id, const char* user, const char* pass, int keepAliveTimer, int pingInter);
 int MQTT_Connect();
 int Reconnect();
 void MQTT_Process();

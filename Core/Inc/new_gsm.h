@@ -27,7 +27,7 @@ void GsmModuleReset(void);
 void GSM_Check();
 int GSM_ON();
 void GSM_OFF();
-void GSM_Init(const char* apn, const char* mqttserver);
+void GSM_Init(const char* apn, const char* mqttserver, uint16_t port);
 void ToCMDMode();
 void ToDataMode();
 #ifdef GSM3G

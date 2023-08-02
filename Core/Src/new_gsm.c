@@ -34,6 +34,7 @@ char timeZone[5] = {0};
 
 char APN[20] = {0};
 char MQTTServer[50] = {0};
+uint16_t MQTTport = 0;
 char AtCom[100] = {0};
 /*End ofUser Variables*/
 
@@ -127,9 +128,10 @@ void GSM_OFF(){
 	MQTT_Ready = 0;
 }
 
-void GSM_Init(const char* apn, const char* mqttserver){
+void GSM_Init(const char* apn, const char* mqttserver, uint16_t port){
 	strcpy(APN, apn);
 	strcpy(MQTTServer, mqttserver);
+	MQTTport = port;
 }
 
 void ToCMDMode(){
@@ -654,10 +656,10 @@ int TCP_Connect(int state){
 		err = 100;
 		memset(AtCom,0,sizeof(AtCom));
 #ifdef GSMNEW
-		sprintf(AtCom, "AT+CIPOPEN=0,\"TCP\",\"%s\",1883\r\n", MQTTServer);
+		sprintf(AtCom, "AT+CIPOPEN=0,\"TCP\",\"%s\",%d\r\n", MQTTServer, MQTTport);
 #endif
 #ifdef GSMOLD
-		sprintf(AtCom, "AT+TCPCONNECT=\"%s\",1883\r\n", MQTTServer);
+		sprintf(AtCom, "AT+TCPCONNECT=\"%s\",%d\r\n", MQTTServer, MQTTport);
 #endif
 		err = Try_Send_AT1((uint8_t*) AtCom, "CONNECT 9600\r\n", TIMEOUT_2s, 3);
 		if(err != 1){return -1;}
@@ -741,7 +743,7 @@ int TCP_Connect(int state){
 	case 9:
 		err = 100;
 		memset(AtCom,0,sizeof(AtCom));
-		sprintf(AtCom, "AT+CIPSTART=\"TCP\",\"%s\",1883\r\n", MQTTServer);
+		sprintf(AtCom, "AT+CIPSTART=\"TCP\",\"%s\",%d\r\n", MQTTServer, MQTTport);
 		err = Try_Send_AT1((uint8_t*) AtCom, "CONNECT\r\n", TIMEOUT_2s, 3);
 		if(err != 1){return -1;}
 		GSM_Module_Mode = 1;

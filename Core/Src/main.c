@@ -201,7 +201,8 @@ void MainLoop(){
 			new_reading = get_sensor_readings();
 
 			HAL_UART_Init(&huart1);
-			MQTT_Init(rm_config.apn, rm_config.mqtt_host, rm_config.mqtt_id, rm_config.mqtt_username, rm_config.mqtt_password, KEEP_ALIVE, PING_TIME);
+			MQTT_Init(rm_config.apn, rm_config.mqtt_host, rm_config.mqtt_port, rm_config.mqtt_id,
+					rm_config.mqtt_username, rm_config.mqtt_password, KEEP_ALIVE, PING_TIME);
 			error = MQTT_Connect();
 #ifdef EXTRA_MQTT_CON_TRY
 			if(error <= 0){

@@ -124,14 +124,14 @@ int MQTT_Publish(const char* topic, const char* message, uint8_t retain){
 	return PublishData(topic, message, 1, 1, retain);
 }
 
-void MQTT_Init(const char* apn, const char* mqttserver, const char* Id, const char* user, const char* pass, int keepAliveTimer, int pingInter){
+void MQTT_Init(const char* apn, const char* mqttserver, uint16_t port, const char* Id, const char* user, const char* pass, int keepAliveTimer, int pingInter){
 	strcpy(Client_id, Id);
 	strcpy(Username, user);
 	strcpy(Password, pass);
 	KeepAlive = keepAliveTimer;
 	pingInterval = pingInter*1000;
 
-	GSM_Init(apn, mqttserver);
+	GSM_Init(apn, mqttserver, port);
 	mqtt_queue_init(&mqtt_data_queue);
 }
 
