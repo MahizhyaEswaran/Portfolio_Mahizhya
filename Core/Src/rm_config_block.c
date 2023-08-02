@@ -33,6 +33,9 @@ void set_rm_default(RM_ConfigBlock *q){
 	sprintf(q->mqtt_password, "%s", MQTT_PASS);
 #ifdef PublishTopic
 	sprintf(q->mqtt_pub_topic, "%s", PublishTopic);
+	q->is_topic_imei = 0;
+#else
+	q->is_topic_imei = 1;
 #endif
 #ifdef SubscribeTopic
 	sprintf(q->mqtt_sub_topic, "%s", SubscribeTopic);
