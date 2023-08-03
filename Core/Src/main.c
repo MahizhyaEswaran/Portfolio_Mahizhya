@@ -61,6 +61,7 @@ void publish_from_flash(int tries);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t wakeup = 0;
+uint8_t remote_conf = 0;
 flash_queue_t flashqueue;
 int error = 100;
 RM_ConfigBlock rm_config = {0};
@@ -111,6 +112,7 @@ int main(void)
 
   flash_queue_init(&flashqueue);
   wakeup = 1;
+  remote_conf = 1;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -233,14 +235,33 @@ void MainLoop(){
 				store_to_flash(&new_reading);
 			}
 
-			HAL_UART_DeInit(&huart1);
-			GSM_OFF();
+			if(!remote_conf){
+				HAL_UART_DeInit(&huart1);
+				GSM_OFF();
+			}
 		}else if(battery >= 261){
 			//only sensor reading
 			new_reading = get_sensor_readings();
 			//store on the flash
 			store_to_flash(&new_reading);
 		}
+	}
+
+	if(remote_conf){
+		Mqtt_sub_str mqtt = {0};
+		memcpy(mqtt.topic[0],rm_config.mqtt_rm_conf_topic,strlen(rm_config.mqtt_rm_conf_topic));
+		mqtt.qos[0] = 0;
+		mqtt.no_of_topics = 1;
+		error = MQTT_Subscribe(&mqtt);
+
+		if(error){
+			remote_conf = 0;
+			if(mqtt_queue_count(&mqtt_data_queue)){
+				set_rm_config_via_remote(&rm_config, &mqtt_data_queue);
+			}
+		}
+		HAL_UART_DeInit(&huart1);
+		GSM_OFF();
 	}
 
 	HAL_SuspendTick();

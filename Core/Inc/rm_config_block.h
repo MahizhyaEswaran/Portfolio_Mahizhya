@@ -33,6 +33,9 @@ typedef struct RM_ConfigBlock {
 
 int config_rm_block_init(RM_ConfigBlock *q);
 void set_rm_default(RM_ConfigBlock *q);
+void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq);
+void split_rm_config(RM_ConfigBlock *rm, char *msg);
+void set_rm_config(int index, char * data, RM_ConfigBlock *rm);
 uint8_t save_rm_config_block(RM_ConfigBlock *q);
 uint8_t read_rm_config_block(RM_ConfigBlock *q);
 

@@ -24,7 +24,7 @@
 
 #define PublishTopic "D2S/SA/V1/dev_anistus_t2/S"
 //#define SubscribeTopic "S2D/SA/V1/dev_anistus_t2/#"
-#define RmConfTopic "S2D/SA/V1/dev_anistus_t2/C"
+#define RmConfTopic "S2D/SA/V1/dev_anistus_t2/C/#"
 /*--------------------END of MQTT ConFiguration-------------------*/
 
 
