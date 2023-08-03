@@ -54,6 +54,7 @@ void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq){
 		mqtt_dequeue(mq, &data);
 		if(strstr(data.data,"RM") && strstr(data.data,"END")){
 			split_rm_config(rm, data.data);
+			MQTT_Publish(data.topic, "", 1);
 		}
 	}
 	save_rm_config_block(rm);
