@@ -22,7 +22,7 @@
 #define KEEP_ALIVE 255
 #define PING_TIME 0
 
-#define IMEI_Topic
+//#define IMEI_Topic
 #define PublishTopic "D2S/SA/V1/dev_anistus_t2/S"
 //#define SubscribeTopic "S2D/SA/V1/dev_anistus_t2/#"
 #define RmConfTopic "S2D/SA/V1/dev_anistus_t2/C/#"

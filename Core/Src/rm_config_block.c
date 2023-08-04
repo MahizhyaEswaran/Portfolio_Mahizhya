@@ -7,6 +7,7 @@
 
 #include <rm_config_block.h>
 #include <new_gsm.h>
+#include <rtc.h>
 
 // Initialize the config block
 int config_rm_block_init(RM_ConfigBlock *q) {
@@ -123,6 +124,7 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 		break;
 	case 7:
 		rm->data_publish_period = (int)strtoul(data,0,10);
+		My_RTC_Set_Wakeup();
 		break;
 	case 8:
 		rm->rm_config_check_period = (int)strtoul(data,0,10);
@@ -141,6 +143,11 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 		break;
 	case 12:
 		rm->is_imei_topic = (int)strtoul(data,0,10);
+		if(rm->is_imei_topic == 1){
+			sprintf(rm->mqtt_pub_topic, "D2S/SA/V1/%s/S", rm->imei_no);
+			sprintf(rm->mqtt_sub_topic, "S2D/SA/V1/%s/#", rm->imei_no);
+			sprintf(rm->mqtt_rm_conf_topic, "S2D/SA/V1/%s/C/#", rm->imei_no);
+		}
 		break;
 	}
 }
