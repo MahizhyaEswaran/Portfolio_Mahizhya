@@ -30,6 +30,7 @@ int GSM_Module_Mode = 0;
 int TCP_state = 0;
 int TCP_Ready = 0;
 int signalStrength = 0;
+char gsmIMEI[20] = {0};
 char timeZone[5] = {0};
 
 char APN[20] = {0};
@@ -239,6 +240,29 @@ void GetRTC(){
 		    HAL_Delay(1);
 		}
 	}
+}
+
+void GetIMEI(){
+	HAL_UART_Init(&huart1);
+	GSM_PowerControl(1);
+	GSM_Module_Ready = 0;
+	GSM_Module_Mode = 0;
+	TCP_state = 0;
+	TCP_Ready = 0;
+	MQTT_Ready = 0;
+	GSM_ON();
+
+	char IMEIreply[200] = {0};
+	char * token = NULL;
+	int reply = Try_Send_AT1_return((uint8_t*) "AT+CGSN\r\n","OK\r\n",TIMEOUT_2s,IMEIreply,3);
+
+	token = strstr(IMEIreply, "AT+CGSN\r\r\n");
+	if(reply && token){
+		memcpy(gsmIMEI, &token[10], 15);
+	}
+
+	HAL_UART_DeInit(&huart1);
+	GSM_OFF();
 }
 
 void SendAT(uint8_t *p_string){
