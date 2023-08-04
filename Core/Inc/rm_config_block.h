@@ -27,7 +27,8 @@ typedef struct RM_ConfigBlock {
     char mqtt_pub_topic[50];
     char mqtt_sub_topic[50];
     char mqtt_rm_conf_topic[50];
-    uint8_t is_topic_imei;
+    char imei_no[20];
+    uint8_t is_imei_topic;
     uint8_t block_end;
 } RM_ConfigBlock;
 

@@ -19,6 +19,7 @@ extern int GSM_Module_Ready;
 extern int TCP_state;
 extern int TCP_Ready;
 extern char timeZone[5];
+extern char gsmIMEI[20];
 extern int signalStrength;
 
 void PowerToggle(void);
@@ -36,6 +37,7 @@ int NetClose();
 #endif
 void GetCoverage();
 void GetRTC();
+void GetIMEI();
 void SendAT(uint8_t *p_string);
 int SendAT_Reply1(uint8_t *data, char *reply, int timeout);
 int SendAT_Reply2(uint8_t *data, char *reply1, char *reply2, int timeout);

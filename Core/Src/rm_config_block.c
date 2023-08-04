@@ -6,6 +6,7 @@
  */
 
 #include <rm_config_block.h>
+#include <new_gsm.h>
 
 // Initialize the config block
 int config_rm_block_init(RM_ConfigBlock *q) {
@@ -33,9 +34,6 @@ void set_rm_default(RM_ConfigBlock *q){
 	sprintf(q->mqtt_password, "%s", MQTT_PASS);
 #ifdef PublishTopic
 	sprintf(q->mqtt_pub_topic, "%s", PublishTopic);
-	q->is_topic_imei = 0;
-#else
-	q->is_topic_imei = 1;
 #endif
 #ifdef SubscribeTopic
 	sprintf(q->mqtt_sub_topic, "%s", SubscribeTopic);
@@ -43,9 +41,22 @@ void set_rm_default(RM_ConfigBlock *q){
 #ifdef RmConfTopic
 	sprintf(q->mqtt_rm_conf_topic, "%s", RmConfTopic);
 #endif
+#ifdef IMEI_Topic
+	q->is_imei_topic = 1;
+#else
+	q->is_imei_topic = 0;
+#endif
+	GetIMEI();
+	sprintf(q->imei_no, "%s", gsmIMEI);
 	q->mqtt_port = MQTT_PORT;
 	q->data_publish_period = WAKEUP_TIME;
 	q->rm_config_check_period = CONFIG_PERIOD;
+
+	if(q->is_imei_topic == 1){
+		sprintf(q->mqtt_pub_topic, "D2S/SA/V1/%s/S", q->imei_no);
+		sprintf(q->mqtt_sub_topic, "S2D/SA/V1/%s/#", q->imei_no);
+		sprintf(q->mqtt_rm_conf_topic, "S2D/SA/V1/%s/C/#", q->imei_no);
+	}
 }
 
 void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq){
@@ -129,7 +140,7 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 		memcpy(rm->mqtt_rm_conf_topic,data,strlen(data));
 		break;
 	case 12:
-		rm->is_topic_imei = (int)strtoul(data,0,10);
+		rm->is_imei_topic = (int)strtoul(data,0,10);
 		break;
 	}
 }
