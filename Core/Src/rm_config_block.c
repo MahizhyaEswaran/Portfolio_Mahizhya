@@ -146,3 +146,9 @@ uint8_t read_rm_config_block(RM_ConfigBlock *q) {
 	memcpy(q, (void *) RM_Config_Address , sizeof(RM_ConfigBlock));
 	return 1;
 }
+
+// Delete config block from flash
+uint8_t delete_rm_config_block(RM_ConfigBlock *q) {
+	Flash_Erase_Page(RM_Config_Address, 4);
+    return 1;
+}
