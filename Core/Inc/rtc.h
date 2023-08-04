@@ -42,6 +42,7 @@ void MX_RTC_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void My_RTC_Init(RTC_TimeTypeDef myTime, RTC_DateTypeDef myDate);
+void My_RTC_Set_Wakeup();
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

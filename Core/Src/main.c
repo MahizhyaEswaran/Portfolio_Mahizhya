@@ -91,7 +91,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  error = config_rm_block_init(&rm_config);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -109,6 +109,9 @@ int main(void)
   HAL_ADC_DeInit(&hadc);
   HAL_I2C_DeInit(&hi2c1);
   HAL_I2C_DeInit(&hi2c2);
+
+  error = config_rm_block_init(&rm_config);
+  My_RTC_Set_Wakeup();
 
   flash_queue_init(&flashqueue);
   wakeup = 1;
