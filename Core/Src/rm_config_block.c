@@ -159,6 +159,10 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 			sprintf(rm->mqtt_rm_conf_topic, "S2D/SA/V1/%s/C/#", rm->imei_no);
 		}
 		break;
+	case 97:
+		//for fota
+		//get url and set the fota conf block
+		break;
 	}
 }
 
