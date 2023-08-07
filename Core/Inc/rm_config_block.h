@@ -39,5 +39,6 @@ void split_rm_config(RM_ConfigBlock *rm, char *msg);
 void set_rm_config(int index, char * data, RM_ConfigBlock *rm);
 uint8_t save_rm_config_block(RM_ConfigBlock *q);
 uint8_t read_rm_config_block(RM_ConfigBlock *q);
+uint8_t delete_rm_config_block();
 
 #endif /* INC_RM_CONFIG_BLOCK_H_ */

@@ -9,6 +9,8 @@
 #include <new_gsm.h>
 #include <rtc.h>
 
+uint8_t deviceReset = 0;
+
 // Initialize the config block
 int config_rm_block_init(RM_ConfigBlock *q) {
 	read_rm_config_block(q);
@@ -67,6 +69,10 @@ void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq){
 		if(strstr(data.data,"RM") && strstr(data.data,"END")){
 			split_rm_config(rm, data.data);
 			MQTT_Publish(data.topic, "", 1);
+			if(deviceReset){
+				deviceReset = 0;
+				HAL_NVIC_SystemReset();
+			}
 		}
 	}
 	save_rm_config_block(rm);
@@ -99,6 +105,10 @@ void split_rm_config(RM_ConfigBlock *rm, char *msg){
 
 void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 	switch(index){
+	case 99:
+		delete_rm_config_block();
+		deviceReset = 1;
+		break;
 	case 1:
 		memset(rm->mqtt_host,0,sizeof(rm->mqtt_host));
 		memcpy(rm->mqtt_host,data,strlen(data));
@@ -166,7 +176,7 @@ uint8_t read_rm_config_block(RM_ConfigBlock *q) {
 }
 
 // Delete config block from flash
-uint8_t delete_rm_config_block(RM_ConfigBlock *q) {
+uint8_t delete_rm_config_block() {
 	Flash_Erase_Page(RM_Config_Address, 4);
     return 1;
 }

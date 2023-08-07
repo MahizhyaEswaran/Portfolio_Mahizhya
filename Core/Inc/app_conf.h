@@ -24,7 +24,7 @@
 
 //#define IMEI_Topic
 #define PublishTopic "D2S/SA/V1/dev_anistus_t2/S"
-//#define SubscribeTopic "S2D/SA/V1/dev_anistus_t2/#"
+//#define SubscribeTopic "sample_topic/#"
 #define RmConfTopic "S2D/SA/V1/dev_anistus_t2/C/#"
 /*--------------------END of MQTT ConFiguration-------------------*/
 
