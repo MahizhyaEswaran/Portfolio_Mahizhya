@@ -8,6 +8,7 @@
 #include <rm_config_block.h>
 #include <new_gsm.h>
 #include <rtc.h>
+#include <bl_interface.h>
 
 uint8_t deviceReset = 0;
 
@@ -160,8 +161,9 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 		}
 		break;
 	case 97:
-		//for fota
-		//get url and set the fota conf block
+		//Comment the line below if FOTA (Firmware Over-The-Air) is not being used.
+		//Also remove the include for bl_interface
+		set_fota_config(data, rm->apn);
 		break;
 	}
 }
