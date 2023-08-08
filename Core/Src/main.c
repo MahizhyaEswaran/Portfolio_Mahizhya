@@ -23,7 +23,7 @@
 #include <app_conf.h>
 #include <sensor_read.h>
 #include <rm_config_block.h>
-
+#include <bl_interface.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -116,6 +116,7 @@ int main(void)
   flash_queue_init(&flashqueue);
   wakeup = 1;
   remote_conf = 1;
+  fota_flag_check_on_boot();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -205,10 +206,12 @@ void MainLoop(){
 			//full process (read sensor and publish to server)
 			new_reading = get_sensor_readings();
 
-			HAL_UART_Init(&huart1);
-			MQTT_Init(rm_config.apn, rm_config.mqtt_host, rm_config.mqtt_port, rm_config.mqtt_id,
-					rm_config.mqtt_username, rm_config.mqtt_password, KEEP_ALIVE, PING_TIME);
-			error = MQTT_Connect();
+			if(!MQTT_Ready){
+				HAL_UART_Init(&huart1);
+				MQTT_Init(rm_config.apn, rm_config.mqtt_host, rm_config.mqtt_port, rm_config.mqtt_id,
+						rm_config.mqtt_username, rm_config.mqtt_password, KEEP_ALIVE, PING_TIME);
+				error = MQTT_Connect();
+			}
 #ifdef EXTRA_MQTT_CON_TRY
 			if(error <= 0){
 				//connection failed

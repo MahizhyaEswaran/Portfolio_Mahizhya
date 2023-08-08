@@ -6,6 +6,7 @@
 
 #include <bl_interface.h>
 #include <rm_config_block.h>
+#include <usart.h>
 
 BL_Config_Block bl_config = {0};
 extern uint8_t deviceReset;
@@ -35,7 +36,13 @@ void publish_firmware_status(){
 }
 
 void fota_flag_check_on_boot(){
+	HAL_UART_Init(&huart1);
+	MQTT_Init(rm_config.apn, rm_config.mqtt_host, rm_config.mqtt_port, rm_config.mqtt_id,
+			rm_config.mqtt_username, rm_config.mqtt_password, KEEP_ALIVE, PING_TIME);
+	MQTT_Connect();
+
 	bl_config_block_init(&bl_config);
+	memset(bl_config.url,0,sizeof(bl_config.url));
 	char data[100] = {0};
 	if(bl_config.bl_flag){
 		//bootloader worked
@@ -59,4 +66,6 @@ void fota_flag_check_on_boot(){
 		sprintf(data, "Device Started: SW_%d", (int)bl_config.current_fw_version);
 		MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
 	}
+
+	save_bl_config_block(&bl_config);
 }
