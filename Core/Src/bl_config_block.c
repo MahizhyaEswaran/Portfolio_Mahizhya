@@ -35,3 +35,9 @@ uint8_t read_bl_config_block(BL_Config_Block *q) {
 	memcpy(q, (void *) BL_Config_Address , sizeof(BL_Config_Block));
 	return 1;
 }
+
+// Delete config block
+uint8_t delete_bl_config_block() {
+	Flash_Erase_Page(BL_Config_Address, 2);
+    return 1;
+}

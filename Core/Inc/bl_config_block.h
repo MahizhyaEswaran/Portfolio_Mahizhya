@@ -34,5 +34,6 @@ typedef struct BL_ConfigBlock {
 int bl_config_block_init(BL_Config_Block *q);
 uint8_t save_bl_config_block(BL_Config_Block *q);
 uint8_t read_bl_config_block(BL_Config_Block *q);
+uint8_t delete_bl_config_block();
 
 #endif /* INC_BL_CONFIG_BLOCK_H_ */

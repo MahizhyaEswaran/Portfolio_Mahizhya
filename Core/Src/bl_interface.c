@@ -69,3 +69,8 @@ void fota_flag_check_on_boot(){
 
 	save_bl_config_block(&bl_config);
 }
+
+void delete_bl_config(){
+	delete_bl_config_block();
+	bl_config_block_init(&bl_config);
+}

@@ -165,6 +165,9 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 		//Also remove the include for bl_interface
 		set_fota_config(data, rm->apn);
 		break;
+	case 98:
+		delete_bl_config();
+		break;
 	}
 }
 
