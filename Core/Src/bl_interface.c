@@ -26,10 +26,37 @@ void set_fota_config(char *url, char *apn){
 }
 
 void publish_firmware_status(){
-	  bl_config_block_init(&bl_config);
-	  char data[100] = {0};
-	  sprintf(data, "Start: SW_%d, ErrFlag_%d, ErrState_%d, BlFlag_%d", (int)bl_config.current_fw_version, (int)bl_config.is_error_occurred,
-			  (int)bl_config.error_state, (int)bl_config.bl_flag);
+	bl_config_block_init(&bl_config);
+	char data[100] = {0};
+	sprintf(data, "Start: SW_%d, ErrFlag_%d, ErrState_%d, BlFlag_%d", (int)bl_config.current_fw_version, (int)bl_config.is_error_occurred,
+		  (int)bl_config.error_state, (int)bl_config.bl_flag);
 
-	  MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
+	MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
+}
+
+void fota_flag_check_on_boot(){
+	bl_config_block_init(&bl_config);
+	char data[100] = {0};
+	if(bl_config.bl_flag){
+		//bootloader worked
+		if(bl_config.is_error_occurred){
+			//error occurred
+			sprintf(data, "Bootloader operation failed at state %d. current SW : %d", (int)bl_config.error_state, (int)bl_config.current_fw_version);
+			MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
+			bl_config.bl_flag = 0;
+			bl_config.error_state = 0;
+			bl_config.is_error_occurred = 0;
+		}else{
+			//bootloader operation successful
+			sprintf(data, "Bootloader operation successful. Device Started: SW_%d", (int)bl_config.current_fw_version);
+			MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
+			bl_config.bl_flag = 0;
+			bl_config.error_state = 0;
+			bl_config.is_error_occurred = 0;
+		}
+	}else{
+		//normal start
+		sprintf(data, "Device Started: SW_%d", (int)bl_config.current_fw_version);
+		MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
+	}
 }

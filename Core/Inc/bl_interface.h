@@ -13,5 +13,6 @@ extern BL_Config_Block bl_config;
 
 void set_fota_config(char *url, char *apn);
 void publish_firmware_status();
+void fota_flag_check_on_boot();
 
 #endif /* INC_BL_INTERFACE_H_ */

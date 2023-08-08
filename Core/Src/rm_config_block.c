@@ -89,7 +89,7 @@ void split_rm_config(RM_ConfigBlock *rm, char *msg){
 	token = strtok_r(data, ";",&outer_saveptr);
 	while( token != NULL ) {
 		volatile int index = 0;
-		char conf_data[50] = {0};
+		char conf_data[100] = {0};
 		char index_str[5] = {0};
 
 		sprintf(index_str, strtok_r(token, "-",&inner_saveptr) );
