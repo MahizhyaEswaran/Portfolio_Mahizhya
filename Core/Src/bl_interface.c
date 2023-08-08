@@ -44,19 +44,21 @@ void fota_flag_check_on_boot(){
 	bl_config_block_init(&bl_config);
 	memset(bl_config.url,0,sizeof(bl_config.url));
 	char data[100] = {0};
+	char topic[60] = {0};
+	memcpy(topic,rm_config.mqtt_pub_topic,strlen(rm_config.mqtt_pub_topic) - 2);
 	if(bl_config.bl_flag){
 		//bootloader worked
 		if(bl_config.is_error_occurred){
 			//error occurred
 			sprintf(data, "Bootloader operation failed at state %d. current SW : %d", (int)bl_config.error_state, (int)bl_config.current_fw_version);
-			MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
+			MQTT_Publish(topic, data, 0);
 			bl_config.bl_flag = 0;
 			bl_config.error_state = 0;
 			bl_config.is_error_occurred = 0;
 		}else{
 			//bootloader operation successful
 			sprintf(data, "Bootloader operation successful. Device Started: SW_%d", (int)bl_config.current_fw_version);
-			MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
+			MQTT_Publish(topic, data, 0);
 			bl_config.bl_flag = 0;
 			bl_config.error_state = 0;
 			bl_config.is_error_occurred = 0;
@@ -64,7 +66,7 @@ void fota_flag_check_on_boot(){
 	}else{
 		//normal start
 		sprintf(data, "Device Started: SW_%d", (int)bl_config.current_fw_version);
-		MQTT_Publish(rm_config.mqtt_pub_topic, data, 0);
+		MQTT_Publish(topic, data, 0);
 	}
 
 	save_bl_config_block(&bl_config);
