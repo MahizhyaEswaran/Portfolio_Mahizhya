@@ -19,6 +19,7 @@ extern int GSM_Module_Ready;
 extern int TCP_state;
 extern int TCP_Ready;
 extern char timeZone[5];
+extern char gsmIMEI[20];
 extern int signalStrength;
 
 void PowerToggle(void);
@@ -27,7 +28,7 @@ void GsmModuleReset(void);
 void GSM_Check();
 int GSM_ON();
 void GSM_OFF();
-void GSM_Init(const char* apn, const char* mqttserver);
+void GSM_Init(const char* apn, const char* mqttserver, uint16_t port);
 void ToCMDMode();
 void ToDataMode();
 #ifdef GSM3G
@@ -36,6 +37,7 @@ int NetClose();
 #endif
 void GetCoverage();
 void GetRTC();
+void GetIMEI();
 void SendAT(uint8_t *p_string);
 int SendAT_Reply1(uint8_t *data, char *reply, int timeout);
 int SendAT_Reply2(uint8_t *data, char *reply1, char *reply2, int timeout);

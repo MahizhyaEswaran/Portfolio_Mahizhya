@@ -30,10 +30,12 @@ int GSM_Module_Mode = 0;
 int TCP_state = 0;
 int TCP_Ready = 0;
 int signalStrength = 0;
+char gsmIMEI[20] = {0};
 char timeZone[5] = {0};
 
 char APN[20] = {0};
 char MQTTServer[50] = {0};
+uint16_t MQTTport = 0;
 char AtCom[100] = {0};
 /*End ofUser Variables*/
 
@@ -127,9 +129,10 @@ void GSM_OFF(){
 	MQTT_Ready = 0;
 }
 
-void GSM_Init(const char* apn, const char* mqttserver){
+void GSM_Init(const char* apn, const char* mqttserver, uint16_t port){
 	strcpy(APN, apn);
 	strcpy(MQTTServer, mqttserver);
+	MQTTport = port;
 }
 
 void ToCMDMode(){
@@ -237,6 +240,29 @@ void GetRTC(){
 		    HAL_Delay(1);
 		}
 	}
+}
+
+void GetIMEI(){
+	HAL_UART_Init(&huart1);
+	GSM_PowerControl(1);
+	GSM_Module_Ready = 0;
+	GSM_Module_Mode = 0;
+	TCP_state = 0;
+	TCP_Ready = 0;
+	MQTT_Ready = 0;
+	GSM_ON();
+
+	char IMEIreply[200] = {0};
+	char * token = NULL;
+	int reply = Try_Send_AT1_return((uint8_t*) "AT+CGSN\r\n","OK\r\n",TIMEOUT_2s,IMEIreply,3);
+
+	token = strstr(IMEIreply, "AT+CGSN\r\r\n");
+	if(reply && token){
+		memcpy(gsmIMEI, &token[10], 15);
+	}
+
+	HAL_UART_DeInit(&huart1);
+	GSM_OFF();
 }
 
 void SendAT(uint8_t *p_string){
@@ -654,10 +680,10 @@ int TCP_Connect(int state){
 		err = 100;
 		memset(AtCom,0,sizeof(AtCom));
 #ifdef GSMNEW
-		sprintf(AtCom, "AT+CIPOPEN=0,\"TCP\",\"%s\",1883\r\n", MQTTServer);
+		sprintf(AtCom, "AT+CIPOPEN=0,\"TCP\",\"%s\",%d\r\n", MQTTServer, MQTTport);
 #endif
 #ifdef GSMOLD
-		sprintf(AtCom, "AT+TCPCONNECT=\"%s\",1883\r\n", MQTTServer);
+		sprintf(AtCom, "AT+TCPCONNECT=\"%s\",%d\r\n", MQTTServer, MQTTport);
 #endif
 		err = Try_Send_AT1((uint8_t*) AtCom, "CONNECT 9600\r\n", TIMEOUT_2s, 3);
 		if(err != 1){return -1;}
@@ -741,7 +767,7 @@ int TCP_Connect(int state){
 	case 9:
 		err = 100;
 		memset(AtCom,0,sizeof(AtCom));
-		sprintf(AtCom, "AT+CIPSTART=\"TCP\",\"%s\",1883\r\n", MQTTServer);
+		sprintf(AtCom, "AT+CIPSTART=\"TCP\",\"%s\",%d\r\n", MQTTServer, MQTTport);
 		err = Try_Send_AT1((uint8_t*) AtCom, "CONNECT\r\n", TIMEOUT_2s, 3);
 		if(err != 1){return -1;}
 		GSM_Module_Mode = 1;

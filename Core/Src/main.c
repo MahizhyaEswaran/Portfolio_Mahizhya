@@ -22,8 +22,8 @@
 #include <flash_queue.h>
 #include <app_conf.h>
 #include <sensor_read.h>
-
-
+#include <rm_config_block.h>
+#include <bl_interface.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,8 +61,10 @@ void publish_from_flash(int tries);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t wakeup = 0;
+uint8_t remote_conf = 0;
 flash_queue_t flashqueue;
 int error = 100;
+RM_ConfigBlock rm_config = {0};
 
 /* USER CODE END 0 */
 
@@ -89,7 +91,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-	//
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -108,8 +110,13 @@ int main(void)
   HAL_I2C_DeInit(&hi2c1);
   HAL_I2C_DeInit(&hi2c2);
 
+  error = config_rm_block_init(&rm_config);
+  My_RTC_Set_Wakeup();
+
   flash_queue_init(&flashqueue);
   wakeup = 1;
+  remote_conf = 1;
+  fota_flag_check_on_boot();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -199,9 +206,12 @@ void MainLoop(){
 			//full process (read sensor and publish to server)
 			new_reading = get_sensor_readings();
 
-			HAL_UART_Init(&huart1);
-			MQTT_Init(APN, MQTT, MQTT_ID, USER, PASS, KEEP_ALIVE, PING_TIME);
-			error = MQTT_Connect();
+			if(!MQTT_Ready){
+				HAL_UART_Init(&huart1);
+				MQTT_Init(rm_config.apn, rm_config.mqtt_host, rm_config.mqtt_port, rm_config.mqtt_id,
+						rm_config.mqtt_username, rm_config.mqtt_password, KEEP_ALIVE, PING_TIME);
+				error = MQTT_Connect();
+			}
 #ifdef EXTRA_MQTT_CON_TRY
 			if(error <= 0){
 				//connection failed
@@ -219,7 +229,7 @@ void MainLoop(){
 					//publish current data
 					char mqtt_msg[150] = {0};
 					prepare_mqtt_msg(&new_reading, mqtt_msg);
-					MQTT_Publish(PublishTopic, mqtt_msg, 0);
+					MQTT_Publish(rm_config.mqtt_pub_topic, mqtt_msg, 0);
 				}
 
 				if(!MQTT_Ready){
@@ -231,14 +241,33 @@ void MainLoop(){
 				store_to_flash(&new_reading);
 			}
 
-			HAL_UART_DeInit(&huart1);
-			GSM_OFF();
+			if(!remote_conf){
+				HAL_UART_DeInit(&huart1);
+				GSM_OFF();
+			}
 		}else if(battery >= 261){
 			//only sensor reading
 			new_reading = get_sensor_readings();
 			//store on the flash
 			store_to_flash(&new_reading);
 		}
+	}
+
+	if(remote_conf){
+		Mqtt_sub_str mqtt = {0};
+		memcpy(mqtt.topic[0],rm_config.mqtt_rm_conf_topic,strlen(rm_config.mqtt_rm_conf_topic));
+		mqtt.qos[0] = 0;
+		mqtt.no_of_topics = 1;
+		error = MQTT_Subscribe(&mqtt);
+
+		if(error){
+			remote_conf = 0;
+			if(mqtt_queue_count(&mqtt_data_queue)){
+				set_rm_config_via_remote(&rm_config, &mqtt_data_queue);
+			}
+		}
+		HAL_UART_DeInit(&huart1);
+		GSM_OFF();
 	}
 
 	HAL_SuspendTick();
@@ -403,7 +432,7 @@ void publish_from_flash(int tries){
 		char mqtt_msg[150] = {0};
 		prepare_mqtt_msg(&data.sensor, mqtt_msg);
 
-		if(MQTT_Publish(PublishTopic, mqtt_msg, 0)){
+		if(MQTT_Publish(rm_config.mqtt_pub_topic, mqtt_msg, 0)){
 			flash_dequeue(&flashqueue, &data);
 		}else{
 			//publish failed

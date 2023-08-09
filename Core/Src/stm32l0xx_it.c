@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "OneWire.h"
+#include <rm_config_block.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,6 +44,9 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 extern uint8_t wakeup;
+extern uint8_t remote_conf;
+extern RM_ConfigBlock rm_config;
+uint16_t count = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -155,6 +159,11 @@ void RTC_IRQHandler(void)
   HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
   /* USER CODE BEGIN RTC_IRQn 1 */
   wakeup = 1;
+  count++;
+  if(count >= (rm_config.rm_config_check_period/rm_config.data_publish_period)){
+	  remote_conf = 1;
+	  count = 0;
+  }
   /* USER CODE END RTC_IRQn 1 */
 }
 

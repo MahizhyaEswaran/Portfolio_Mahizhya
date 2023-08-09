@@ -14,14 +14,18 @@
 
 /*-----------------------MQTT ConFiguration-----------------------*/
 #define APN ""
-#define MQTT "52.24.122.165"
-#define MQTT_ID "dev_anistus_t1"
-#define USER "user"
-#define PASS "user@pass"
+#define MQTT_HOST "52.24.122.165"
+#define MQTT_ID "dev_anistus_t2"
+#define MQTT_PORT 1883
+#define MQTT_USER "user"
+#define MQTT_PASS "user@pass"
 #define KEEP_ALIVE 255
 #define PING_TIME 0
 
-#define PublishTopic "D2S/SA/V1/dev_anistus_t1/S"
+//#define IMEI_Topic
+#define PublishTopic "D2S/SA/V1/dev_anistus_t2/S"
+//#define SubscribeTopic "sample_topic/#"
+#define RmConfTopic "S2D/SA/V1/dev_anistus_t2/C/#"
 /*--------------------END of MQTT ConFiguration-------------------*/
 
 
@@ -43,6 +47,8 @@
 //Set it if you need an extra connection attempt after the initial
 //connection attempt fails.
 //#define EXTRA_MQTT_CON_TRY
+
+#define CONFIG_PERIOD 10
 /*-----------------END of Main Flow ConFiguration-----------------*/
 
 /*
