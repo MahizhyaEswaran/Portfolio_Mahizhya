@@ -7,7 +7,6 @@
 
 #include <rm_config_block.h>
 #include <new_gsm.h>
-#include <rtc.h>
 #include <bl_interface.h>
 
 uint8_t deviceReset = 0;
@@ -138,7 +137,6 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 		break;
 	case 7:
 		rm->data_publish_period = (int)strtoul(data,0,10);
-		My_RTC_Set_Wakeup();
 		break;
 	case 8:
 		rm->rm_config_check_period = (int)strtoul(data,0,10);

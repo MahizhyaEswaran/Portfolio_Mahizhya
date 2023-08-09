@@ -111,7 +111,6 @@ int main(void)
   HAL_I2C_DeInit(&hi2c2);
 
   error = config_rm_block_init(&rm_config);
-  My_RTC_Set_Wakeup();
 
   flash_queue_init(&flashqueue);
   wakeup = 1;
