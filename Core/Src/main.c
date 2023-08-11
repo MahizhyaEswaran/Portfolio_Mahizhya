@@ -263,6 +263,9 @@ void MainLoop(){
 			//store on the flash
 			HAL_IWDG_Refresh(&hiwdg);
 			store_to_flash(&new_reading);
+			remote_conf = 0;
+		}else{
+			remote_conf = 0;
 		}
 	}
 
