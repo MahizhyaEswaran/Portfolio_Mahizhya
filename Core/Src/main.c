@@ -97,7 +97,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
-//  MX_IWDG_Init();
+  MX_IWDG_Init();
   MX_RTC_Init();
   MX_ADC_Init();
   MX_I2C1_Init();
@@ -110,13 +110,16 @@ int main(void)
   HAL_I2C_DeInit(&hi2c1);
   HAL_I2C_DeInit(&hi2c2);
 
+  HAL_IWDG_Refresh(&hiwdg);
   error = config_rm_block_init(&rm_config);
-  My_RTC_Set_Wakeup();
+  HAL_IWDG_Refresh(&hiwdg);
 
   flash_queue_init(&flashqueue);
   wakeup = 1;
   remote_conf = 1;
+  HAL_IWDG_Refresh(&hiwdg);
   fota_flag_check_on_boot();
+  HAL_IWDG_Refresh(&hiwdg);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -197,16 +200,19 @@ void MainLoop(){
 	if(wakeup){
 		wakeup = 0;
 		HAL_Delay(1000);
+		HAL_IWDG_Refresh(&hiwdg);
 		int battery = Read_Battery_Leval();
 		sensor_reading new_reading = {0};
 
 		//for testing
-		battery = 275;
+		// battery = 275;
 		if(battery >= 270){
 			//full process (read sensor and publish to server)
+			HAL_IWDG_Refresh(&hiwdg);
 			new_reading = get_sensor_readings();
 
 			if(!MQTT_Ready){
+				HAL_IWDG_Refresh(&hiwdg);
 				HAL_UART_Init(&huart1);
 				MQTT_Init(rm_config.apn, rm_config.mqtt_host, rm_config.mqtt_port, rm_config.mqtt_id,
 						rm_config.mqtt_username, rm_config.mqtt_password, KEEP_ALIVE, PING_TIME);
@@ -220,6 +226,7 @@ void MainLoop(){
 #endif
 
 			if(MQTT_Ready){
+				HAL_IWDG_Refresh(&hiwdg);
 				get_time(&new_reading);
 				new_reading.signal_strength = signalStrength;
 				//publish from flash
@@ -227,6 +234,7 @@ void MainLoop(){
 
 				if(MQTT_Ready){
 					//publish current data
+					HAL_IWDG_Refresh(&hiwdg);
 					char mqtt_msg[150] = {0};
 					prepare_mqtt_msg(&new_reading, mqtt_msg);
 					MQTT_Publish(rm_config.mqtt_pub_topic, mqtt_msg, 0);
@@ -234,26 +242,35 @@ void MainLoop(){
 
 				if(!MQTT_Ready){
 					//stored to flash
+					HAL_IWDG_Refresh(&hiwdg);
 					store_to_flash(&new_reading);
 				}
 			}else{
 				//stored to flash
+				HAL_IWDG_Refresh(&hiwdg);
 				store_to_flash(&new_reading);
 			}
 
 			if(!remote_conf){
+				HAL_IWDG_Refresh(&hiwdg);
 				HAL_UART_DeInit(&huart1);
 				GSM_OFF();
 			}
 		}else if(battery >= 261){
 			//only sensor reading
+			HAL_IWDG_Refresh(&hiwdg);
 			new_reading = get_sensor_readings();
 			//store on the flash
+			HAL_IWDG_Refresh(&hiwdg);
 			store_to_flash(&new_reading);
+			remote_conf = 0;
+		}else{
+			remote_conf = 0;
 		}
 	}
 
 	if(remote_conf){
+		HAL_IWDG_Refresh(&hiwdg);
 		Mqtt_sub_str mqtt = {0};
 		memcpy(mqtt.topic[0],rm_config.mqtt_rm_conf_topic,strlen(rm_config.mqtt_rm_conf_topic));
 		mqtt.qos[0] = 0;
@@ -261,68 +278,86 @@ void MainLoop(){
 		error = MQTT_Subscribe(&mqtt);
 
 		if(error){
+			HAL_IWDG_Refresh(&hiwdg);
 			remote_conf = 0;
 			if(mqtt_queue_count(&mqtt_data_queue)){
 				set_rm_config_via_remote(&rm_config, &mqtt_data_queue);
+				HAL_IWDG_Refresh(&hiwdg);
 			}
 		}
+		HAL_IWDG_Refresh(&hiwdg);
 		HAL_UART_DeInit(&huart1);
 		GSM_OFF();
 	}
 
+	HAL_IWDG_Refresh(&hiwdg);
 	HAL_SuspendTick();
 	HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);
 
 	HAL_ResumeTick();
 	SystemClock_Config();
+	HAL_IWDG_Refresh(&hiwdg);
 }
 
 sensor_reading get_sensor_readings(){
+	HAL_IWDG_Refresh(&hiwdg);
 	PowerUp_Sensors();
 #ifdef SHT2x_EN
 	SHT2x_Sensor_Init();
 #endif
 	HAL_Delay(5000);
+	HAL_IWDG_Refresh(&hiwdg);
 
 	sensor_reading sensor = {0};
 #ifdef SHT2x_Temp_EN
 	sensor.SHT2x_temp = Read_Temp_SHT2x();
+	HAL_IWDG_Refresh(&hiwdg);
 #endif
 #ifdef SHT2x_RH_EN
 	sensor.SHT2x_rh = Read_RH_SHT2x();
+	HAL_IWDG_Refresh(&hiwdg);
 #endif
 #ifdef Moist_EC_EN
 	sensor.soil_moist = Read_Soil_Moisture();
 	sensor.soil_ec = Read_Soil_EC();
+	HAL_IWDG_Refresh(&hiwdg);
 #endif
 #ifdef Irro_EN
 	sensor.irrometer = Read_Irrometer(3);
+	HAL_IWDG_Refresh(&hiwdg);
 #endif
 #ifdef Light_EN
 	sensor.light = Read_Light_BH1750();
+	HAL_IWDG_Refresh(&hiwdg);
 #endif
 #ifdef DS18B20_Temp_EN
 	sensor.DS18B20_temp = Read_Temp_DS18B20();
+	HAL_IWDG_Refresh(&hiwdg);
 #endif
 	sensor.internal_temp = Read_Internal_Temp();
 	sensor.battery = Read_Battery_Leval();
+	HAL_IWDG_Refresh(&hiwdg);
 #ifdef Power_status_EN
 	sensor.power_status = Read_Power_Status();
+	HAL_IWDG_Refresh(&hiwdg);
 #endif
 	sensor.signal_strength = signalStrength;
 
 	get_time(&sensor);
+	HAL_IWDG_Refresh(&hiwdg);
 
 #ifdef SHT2x_EN
 	SHT2x_Sensor_DeInit();
 #endif
 	PowerDown_Sensors();
+	HAL_IWDG_Refresh(&hiwdg);
 	return sensor;
 }
 
 void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	int sensor_count = 0;
 	char data[30] = {0};
+	HAL_IWDG_Refresh(&hiwdg);
 
 	//date and time
 	if(((sensor->timestamp.month == 0) && (sensor->timestamp.day == 0)
@@ -421,11 +456,13 @@ void store_to_flash(sensor_reading *sensor){
 	flash_str new = {0};
 	new.sensor = *sensor;
 	flash_enqueue(&flashqueue, &new);
+	HAL_IWDG_Refresh(&hiwdg);
 	HAL_Delay(1);
 }
 
 void publish_from_flash(int tries){
 	while(flash_queue_count(&flashqueue) && tries){
+		HAL_IWDG_Refresh(&hiwdg);
 		flash_str data = {0};
 		flash_peek(&flashqueue, &data);
 
@@ -434,6 +471,7 @@ void publish_from_flash(int tries){
 
 		if(MQTT_Publish(rm_config.mqtt_pub_topic, mqtt_msg, 0)){
 			flash_dequeue(&flashqueue, &data);
+			HAL_IWDG_Refresh(&hiwdg);
 		}else{
 			//publish failed
 			tries--;
@@ -441,6 +479,7 @@ void publish_from_flash(int tries){
 				break;
 			}
 			MQTT_Process();
+			HAL_IWDG_Refresh(&hiwdg);
 		}
 	}
 }

@@ -46,7 +46,8 @@
 extern uint8_t wakeup;
 extern uint8_t remote_conf;
 extern RM_ConfigBlock rm_config;
-uint16_t count = 0;
+uint16_t data__wake_count = 0;
+uint16_t config_wake_count = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -158,11 +159,18 @@ void RTC_IRQHandler(void)
   /* USER CODE END RTC_IRQn 0 */
   HAL_RTCEx_WakeUpTimerIRQHandler(&hrtc);
   /* USER CODE BEGIN RTC_IRQn 1 */
-  wakeup = 1;
-  count++;
-  if(count >= (rm_config.rm_config_check_period/rm_config.data_publish_period)){
+
+  data__wake_count++;
+  config_wake_count++;
+
+  if(data__wake_count >= (rm_config.data_publish_period * 3)){
+	  wakeup = 1;
+	  data__wake_count = 0;
+  }
+
+  if(config_wake_count >= (rm_config.rm_config_check_period * 3)){
 	  remote_conf = 1;
-	  count = 0;
+	  config_wake_count = 0;
   }
   /* USER CODE END RTC_IRQn 1 */
 }

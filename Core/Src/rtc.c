@@ -25,7 +25,6 @@
 #include <rm_config_block.h>
 
 int RTC_OK = 0;
-extern RM_ConfigBlock rm_config;
 /* USER CODE END 0 */
 
 RTC_HandleTypeDef hrtc;
@@ -87,7 +86,7 @@ void MX_RTC_Init(void)
 
   /** Enable the WakeUp
   */
-  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 600, RTC_WAKEUPCLOCK_CK_SPRE_16BITS) != HAL_OK)
+  if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 40960, RTC_WAKEUPCLOCK_RTCCLK_DIV16) != HAL_OK)
   {
     Error_Handler();
   }
@@ -160,14 +159,5 @@ void My_RTC_Init(RTC_TimeTypeDef myTime, RTC_DateTypeDef myDate){
     }
 
     RTC_OK = 1;
-}
-
-void My_RTC_Set_Wakeup(){
-	//Enable the WakeUp
-	HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
-	if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 60*rm_config.data_publish_period, RTC_WAKEUPCLOCK_CK_SPRE_16BITS) != HAL_OK)
-	{
-	Error_Handler();
-	}
 }
 /* USER CODE END 1 */
