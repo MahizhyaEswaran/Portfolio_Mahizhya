@@ -29,6 +29,7 @@ This firmware represents the third iteration of the firmware developed for this 
 
 10. Furthermore, if the received configuration contains a Firmware Over-The-Air (FOTA) request, the firmware updates the URL for the new firmware within the bootloader configuration. Subsequently, the device is reset to enable the bootloader to handle the FOTA process seamlessly.
 
+For a clearer understanding, you can refer to the flow diagram provided in the "images" folder.
 
 ## Configuration
 
@@ -90,6 +91,7 @@ Then, define the wakeup period and the remote configuration check period in the 
 #define CONFIG_PERIOD 10
 /*-----------------END of Main Flow Configuration-----------------*/
 ```
+Please note that the `CONFIG_PERIOD` should be a multiple of the `WAKEUP_TIME`.
 
 Once these configurations are set, you can proceed to install the code in app slot 1. This can be achieved by debugging the code or using STM32Programmer. Instructions for these procedures can be found in the "Build and Debug" section.
 
