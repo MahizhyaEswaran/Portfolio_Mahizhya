@@ -356,7 +356,7 @@ sensor_reading get_sensor_readings(){
 
 void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 	int sensor_count = 0;
-	char data[30] = {0};
+	char data[35] = {0};
 	HAL_IWDG_Refresh(&hiwdg);
 
 	//date and time
@@ -374,60 +374,60 @@ void prepare_mqtt_msg(sensor_reading *sensor, char *mqtt){
 
 #ifdef SHT2x_Temp_EN
 	//SHT2x temperature
-	sprintf(data,"%d-T:%.2f;",sensor_count++, sensor->SHT2x_temp);
+	sprintf(data,"%d-%s:%.2f;",sensor_count++, rm_config.D_label.temp, sensor->SHT2x_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 #endif
 
 #ifdef SHT2x_RH_EN
 	//SHT2x relative humidity
-	sprintf(data,"%d-H:%.2f;",sensor_count++, sensor->SHT2x_rh);
+	sprintf(data,"%d-%s:%.2f;",sensor_count++, rm_config.D_label.rh, sensor->SHT2x_rh);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 #endif
 
 #ifdef Moist_EC_EN
 	//soil moisture and EC
-	sprintf(data,"%d-MEA4:%03d/%03d;",sensor_count++, sensor->soil_moist, sensor->soil_ec);
+	sprintf(data,"%d-%s:%03d/%03d;",sensor_count++, rm_config.D_label.mois_ec, sensor->soil_moist, sensor->soil_ec);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 #endif
 
 #ifdef Irro_EN
 	//irrometer reading
-	sprintf(data,"%d-IRO:%04d/%04d/%.2f;",sensor_count++, sensor->irrometer.A1, sensor->irrometer.A2, sensor->SHT2x_temp);
+	sprintf(data,"%d-%s:%04d/%04d/%.2f;",sensor_count++, rm_config.D_label.irro, sensor->irrometer.A1, sensor->irrometer.A2, sensor->SHT2x_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 #endif
 
 #ifdef Light_EN
 	//light intensity
-	sprintf(data,"%d-LIA1:%06d;",sensor_count++, sensor->light);
+	sprintf(data,"%d-%s:%06d;",sensor_count++, rm_config.D_label.light, sensor->light);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 #endif
 
 #ifdef DS18B20_Temp_EN
 	//soil temperature (DS18b20)
-	sprintf(data,"%d-ST:%.2f;",sensor_count++, sensor->DS18B20_temp);
+	sprintf(data,"%d-%s:%.2f;",sensor_count++, rm_config.D_label.soil_temp, sensor->DS18B20_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 #endif
 
 	//device status
-	sprintf(data,"%d-B:%03d;%d-IT:%02d;",sensor_count, sensor->battery,sensor_count+1, sensor->internal_temp);
+	sprintf(data,"%d-%s:%03d;%d-%s:%02d;",sensor_count, rm_config.D_label.batt, sensor->battery,sensor_count+1, rm_config.D_label.it, sensor->internal_temp);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 	sensor_count+=2;
 
 	//signal strength
-	sprintf(data,"%d-SS:%02d;",sensor_count++, sensor->signal_strength);
+	sprintf(data,"%d-%s:%02d;",sensor_count++, rm_config.D_label.ss, sensor->signal_strength);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 
 #ifdef Power_status_EN
 	//power status
-	sprintf(data,"%d-PS:%d;",sensor_count++, sensor->power_status);
+	sprintf(data,"%d-%s:%d;",sensor_count++, rm_config.D_label.ps, sensor->power_status);
 	strncat(mqtt, data, strlen(data));
 	memset(data, 0, sizeof(data));
 #endif

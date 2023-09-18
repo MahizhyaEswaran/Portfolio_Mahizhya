@@ -41,6 +41,20 @@
 /*-------------------END of Sensor ConFiguration------------------*/
 
 
+/*-------------------Sensor Label ConFiguration-------------------*/
+#define SHT2x_Temp_LB "T"
+#define SHT2x_RH_LB "H"
+#define Moist_EC_LB "MEA4"
+#define Irro_LB "IRO"
+#define Light_LB "LIA1"
+#define DS18B20_Temp_LB "ST"
+#define Device_Battery_LB "B"
+#define Internal_temp_LB "IT"
+#define Signal_Strength_LB "SS"
+#define Power_Status_LB "PS"
+/*----------------END of Sensor Label ConFiguration---------------*/
+
+
 /*---------------------Main Flow ConFiguration--------------------*/
 #define WAKEUP_TIME 5	//time in minutes
 

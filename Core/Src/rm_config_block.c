@@ -60,6 +60,20 @@ void set_rm_default(RM_ConfigBlock *q){
 		sprintf(q->mqtt_sub_topic, "S2D/SA/V1/%s/#", q->imei_no);
 		sprintf(q->mqtt_rm_conf_topic, "S2D/SA/V1/%s/C/#", q->imei_no);
 	}
+	set_dlabel_default(q);
+}
+
+void set_dlabel_default(RM_ConfigBlock *q){
+	sprintf(q->D_label.temp, "%s", SHT2x_Temp_LB);
+	sprintf(q->D_label.rh, "%s", SHT2x_RH_LB);
+	sprintf(q->D_label.mois_ec, "%s", Moist_EC_LB);
+	sprintf(q->D_label.irro, "%s", Irro_LB);
+	sprintf(q->D_label.light, "%s", Light_LB);
+	sprintf(q->D_label.soil_temp, "%s", DS18B20_Temp_LB);
+	sprintf(q->D_label.batt, "%s", Device_Battery_LB);
+	sprintf(q->D_label.it, "%s", Internal_temp_LB);
+	sprintf(q->D_label.ss, "%s", Signal_Strength_LB);
+	sprintf(q->D_label.ps, "%s", Power_Status_LB);
 }
 
 void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq){

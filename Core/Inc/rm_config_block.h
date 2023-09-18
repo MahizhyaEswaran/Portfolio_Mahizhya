@@ -14,6 +14,19 @@
 
 #define RM_Config_Address 0x08007d00
 
+typedef struct DataLabel {
+	char temp[10];
+	char rh[10];
+	char mois_ec[10];
+	char irro[10];
+	char light[10];
+	char soil_temp[10];
+	char batt[10];
+	char it[10];
+	char ss[10];
+	char ps[10];
+}DataLabel;
+
 typedef struct RM_ConfigBlock {
 	uint8_t block_start;
     char mqtt_host[50];
@@ -30,10 +43,12 @@ typedef struct RM_ConfigBlock {
     char imei_no[20];
     uint8_t is_imei_topic;
     uint8_t block_end;
+    DataLabel D_label;
 } RM_ConfigBlock;
 
 int config_rm_block_init(RM_ConfigBlock *q);
 void set_rm_default(RM_ConfigBlock *q);
+void set_dlabel_default(RM_ConfigBlock *q);
 void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq);
 void split_rm_config(RM_ConfigBlock *rm, char *msg);
 void set_rm_config(int index, char * data, RM_ConfigBlock *rm);
