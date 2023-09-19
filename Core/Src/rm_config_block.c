@@ -76,6 +76,78 @@ void set_dlabel_default(RM_ConfigBlock *q){
 	sprintf(q->D_label.ps, "%s", Power_Status_LB);
 }
 
+void split_dlabel_rm(char * msg, RM_ConfigBlock *rm){
+	char *token;
+	char data[100] = {0};
+	char* outer_saveptr = NULL;
+	char* inner_saveptr = NULL;
+	memcpy(data, msg, strlen(msg));
+
+	token = strtok_r(data, ",",&outer_saveptr);
+	while( token != NULL ) {
+		volatile int index = 0;
+		char conf_data[100] = {0};
+		char index_str[5] = {0};
+
+		sprintf(index_str, strtok_r(token, ":",&inner_saveptr) );
+		sprintf(conf_data, strtok_r(NULL, ":",&inner_saveptr) );
+		index = (int)strtoul(index_str,0,10);
+
+		if(index > 0){
+			set_dlabel_rm(index, conf_data, rm);
+		}
+
+		token = strtok_r(NULL, ",", &outer_saveptr);
+	}
+}
+
+void set_dlabel_rm(int index, char * data, RM_ConfigBlock *rm){
+	switch(index){
+	case 1:
+		memset(rm->D_label.temp,0,sizeof(rm->D_label.temp));
+		memcpy(rm->D_label.temp,data,strlen(data));
+		break;
+	case 2:
+		memset(rm->D_label.rh,0,sizeof(rm->D_label.rh));
+		memcpy(rm->D_label.rh,data,strlen(data));
+		break;
+	case 3:
+		memset(rm->D_label.mois_ec,0,sizeof(rm->D_label.mois_ec));
+		memcpy(rm->D_label.mois_ec,data,strlen(data));
+		break;
+	case 4:
+		memset(rm->D_label.irro,0,sizeof(rm->D_label.irro));
+		memcpy(rm->D_label.irro,data,strlen(data));
+		break;
+	case 5:
+		memset(rm->D_label.light,0,sizeof(rm->D_label.light));
+		memcpy(rm->D_label.light,data,strlen(data));
+		break;
+	case 6:
+		memset(rm->D_label.soil_temp,0,sizeof(rm->D_label.soil_temp));
+		memcpy(rm->D_label.soil_temp,data,strlen(data));
+		break;
+	case 7:
+		memset(rm->D_label.batt,0,sizeof(rm->D_label.batt));
+		memcpy(rm->D_label.batt,data,strlen(data));
+		break;
+	case 8:
+		memset(rm->D_label.it,0,sizeof(rm->D_label.it));
+		memcpy(rm->D_label.it,data,strlen(data));
+		break;
+	case 9:
+		memset(rm->D_label.ss,0,sizeof(rm->D_label.ss));
+		memcpy(rm->D_label.ss,data,strlen(data));
+		break;
+	case 10:
+		memset(rm->D_label.ps,0,sizeof(rm->D_label.ps));
+		memcpy(rm->D_label.ps,data,strlen(data));
+		break;
+	default:
+		break;
+	}
+}
+
 void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq){
 	while(mqtt_queue_count(mq)){
 		Mqtt_str data = {0};
@@ -85,7 +157,7 @@ void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq){
 			MQTT_Publish(data.topic, "", 1);
 			char topic[60] = {0};
 			sprintf(topic, "D2S/%s", &data.topic[4]);
-			MQTT_Publish(topic, "rm-conf-success", 0);
+			MQTT_Publish(topic, "rm-conf-successful", 0);
 			if(deviceReset){
 				deviceReset = 0;
 				HAL_NVIC_SystemReset();
@@ -174,6 +246,9 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 			sprintf(rm->mqtt_sub_topic, "S2D/SA/V1/%s/#", rm->imei_no);
 			sprintf(rm->mqtt_rm_conf_topic, "S2D/SA/V1/%s/C/#", rm->imei_no);
 		}
+		break;
+	case 13:
+		split_dlabel_rm(data, rm);
 		break;
 	case 97:
 		//Comment the line below if FOTA (Firmware Over-The-Air) is not being used.

@@ -49,6 +49,8 @@ typedef struct RM_ConfigBlock {
 int config_rm_block_init(RM_ConfigBlock *q);
 void set_rm_default(RM_ConfigBlock *q);
 void set_dlabel_default(RM_ConfigBlock *q);
+void split_dlabel_rm(char * data, RM_ConfigBlock *rm);
+void set_dlabel_rm(int index, char * data, RM_ConfigBlock *rm);
 void set_rm_config_via_remote(RM_ConfigBlock *rm, mqtt_queue_t *mq);
 void split_rm_config(RM_ConfigBlock *rm, char *msg);
 void set_rm_config(int index, char * data, RM_ConfigBlock *rm);
