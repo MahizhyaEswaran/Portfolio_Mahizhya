@@ -11,6 +11,7 @@
 BL_Config_Block bl_config = {0};
 extern uint8_t deviceReset;
 extern RM_ConfigBlock rm_config;
+extern uint32_t software_version;
 
 // to set the url to the bl config block
 void set_fota_config(char *url, char *apn){
@@ -46,6 +47,9 @@ void fota_flag_check_on_boot(){
 	char data[100] = {0};
 	char topic[60] = {0};
 	memcpy(topic,rm_config.mqtt_pub_topic,strlen(rm_config.mqtt_pub_topic) - 2);
+	if(bl_config.current_fw_version <= 0){
+		bl_config.current_fw_version = software_version;
+	}
 	if(bl_config.bl_flag){
 		//bootloader worked
 		if(bl_config.is_error_occurred){

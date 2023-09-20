@@ -44,7 +44,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint32_t software_version = 30400;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
