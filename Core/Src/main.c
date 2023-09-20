@@ -267,27 +267,27 @@ void MainLoop(){
 		}else{
 			remote_conf = 0;
 		}
-	}
 
-	if(remote_conf){
-		HAL_IWDG_Refresh(&hiwdg);
-		Mqtt_sub_str mqtt = {0};
-		memcpy(mqtt.topic[0],rm_config.mqtt_rm_conf_topic,strlen(rm_config.mqtt_rm_conf_topic));
-		mqtt.qos[0] = 0;
-		mqtt.no_of_topics = 1;
-		error = MQTT_Subscribe(&mqtt);
-
-		if(error){
+		if(remote_conf){
 			HAL_IWDG_Refresh(&hiwdg);
-			remote_conf = 0;
-			if(mqtt_queue_count(&mqtt_data_queue)){
-				set_rm_config_via_remote(&rm_config, &mqtt_data_queue);
+			Mqtt_sub_str mqtt = {0};
+			memcpy(mqtt.topic[0],rm_config.mqtt_rm_conf_topic,strlen(rm_config.mqtt_rm_conf_topic));
+			mqtt.qos[0] = 0;
+			mqtt.no_of_topics = 1;
+			error = MQTT_Subscribe(&mqtt);
+
+			if(error){
 				HAL_IWDG_Refresh(&hiwdg);
+				remote_conf = 0;
+				if(mqtt_queue_count(&mqtt_data_queue)){
+					set_rm_config_via_remote(&rm_config, &mqtt_data_queue);
+					HAL_IWDG_Refresh(&hiwdg);
+				}
 			}
+			HAL_IWDG_Refresh(&hiwdg);
+			HAL_UART_DeInit(&huart1);
+			GSM_OFF();
 		}
-		HAL_IWDG_Refresh(&hiwdg);
-		HAL_UART_DeInit(&huart1);
-		GSM_OFF();
 	}
 
 	HAL_IWDG_Refresh(&hiwdg);
