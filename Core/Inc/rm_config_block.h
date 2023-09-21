@@ -42,8 +42,9 @@ typedef struct RM_ConfigBlock {
     char mqtt_rm_conf_topic[50];
     char imei_no[20];
     uint8_t is_imei_topic;
-    uint8_t block_end;
+    char sensor_order[50];
     DataLabel D_label;
+    uint8_t block_end;
 } RM_ConfigBlock;
 
 int config_rm_block_init(RM_ConfigBlock *q);

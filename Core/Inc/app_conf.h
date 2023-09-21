@@ -30,6 +30,8 @@
 
 
 /*----------------------Sensor ConFiguration----------------------*/
+// Disable the sensors by commenting out the
+// corresponding sensor definition
 #define SHT2x_Temp_EN
 #define SHT2x_RH_EN
 #define Moist_EN
@@ -42,6 +44,7 @@
 
 
 /*-------------------Sensor Label ConFiguration-------------------*/
+// Please don't comment any of the definitions. Just edit the values
 #define SHT2x_Temp_LB "T"
 #define SHT2x_RH_LB "H"
 #define Moist_EC_LB "MEA4"

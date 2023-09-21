@@ -60,6 +60,7 @@ void set_rm_default(RM_ConfigBlock *q){
 		sprintf(q->mqtt_sub_topic, "S2D/SA/V1/%s/#", q->imei_no);
 		sprintf(q->mqtt_rm_conf_topic, "S2D/SA/V1/%s/C/#", q->imei_no);
 	}
+	sprintf(q->sensor_order, "%s", "1,2,3,4,5,6,7,8,9,10");
 	set_dlabel_default(q);
 }
 
