@@ -251,6 +251,10 @@ void set_rm_config(int index, char * data, RM_ConfigBlock *rm){
 	case 13:
 		split_dlabel_rm(data, rm);
 		break;
+	case 14:
+		memset(rm->sensor_order,0,sizeof(rm->sensor_order));
+		memcpy(rm->sensor_order,data,strlen(data));
+		break;
 	case 97:
 		//Comment the line below if FOTA (Firmware Over-The-Air) is not being used.
 		//Also remove the include for bl_interface
