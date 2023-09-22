@@ -120,6 +120,7 @@ Here, the `index` refers to the parameter to be configured, while 'value' repres
 - **11** - MQTT Remote Config Topic (e.g., RM|11-S2D/SA/V1/sample_topic/C/#;|END)
 - **12** - IMEI_Topic Selection (e.g., RM|12-1;|END (select imei topic))
 - **13** - Sensor Data Label Config (e.g., RM|13-1:temp,2:RH,;|END) **Check The 'Sensor Data Label Config' section below for more details**
+- **14** - Sensor Reading Reordering (e.g., RM|14-1,2,3,5,;|END)  **Check The 'Sensor Reading Order Config' section below for more details**
 - **97** - FOTA Request (e.g., RM|97-url;|END)
 - **98** - Bootloader Config Reset (e.g., RM|98-1;|END)
 - **99** - Device Reset (e.g., RM|99-1;|END)
@@ -149,6 +150,28 @@ Sensor data label configuration is a part of the remote configuration, which is 
 - **9** - Device Signal Strength (e.g., RM|13-9:Signal,;|END)
 - **10** - Device Power Status (e.g., RM|13-10:Power,;|END)
 
+#### Sensor Reading Order Configuration
+
+Sensor Reading Order Configuration is a part of the remote configuration, which is used to change the order of sensor readings in the MQTT message. Each sensor corresponds to a unique number, and by specifying the desired order using these numbers in the remote config index 14, you can customize the sensor reading sequence. For example:
+
+```plaintext
+S2D/SA/V1/sample_topic/C/1 -> RM|14-1,2,6,7,;|END
+```
+
+In this example:
+
+- **1** - SHT2x Temperature Sensor
+- **2** - SHT2x Humidity Sensor
+- **3** - Soil Moisture and EC Sensor
+- **4** - Irrometer
+- **5** - Light Intensity Sensor
+- **6** - DS18B20 Soil Temperature Sensor
+- **7** - Device Battery Reading
+- **8** - Device Internal Temperature
+- **9** - Device Signal Strength
+- **10** - Device Power Status
+
+Based on the provided message, the MQTT message will arrange sensor readings in the following order: Temperature Sensor, Humidity Sensor, Soil Temperature, and Device Battery Reading. This configuration allows you to define the sequence of sensor readings in your MQTT messages as needed.
 
 By leveraging this remote configuration guide, you can efficiently adjust various parameters of the device's behavior and initiate FOTA updates through remote communication.
 
