@@ -119,6 +119,8 @@ Here, the `index` refers to the parameter to be configured, while 'value' repres
 - **10** - MQTT Subscribe Topic (e.g., RM|10-S2D/SA/V1/sample_topic/#;|END)
 - **11** - MQTT Remote Config Topic (e.g., RM|11-S2D/SA/V1/sample_topic/C/#;|END)
 - **12** - IMEI_Topic Selection (e.g., RM|12-1;|END (select imei topic))
+- **13** - Sensor Data Label Config (e.g., RM|13-1:temp,2:RH,;|END) **Check The 'Sensor Data Label Config' section below for more details**
+- **14** - Sensor Reading Reordering (e.g., RM|14-1,2,3,5,;|END)  **Check The 'Sensor Reading Order Config' section below for more details**
 - **97** - FOTA Request (e.g., RM|97-url;|END)
 - **98** - Bootloader Config Reset (e.g., RM|98-1;|END)
 - **99** - Device Reset (e.g., RM|99-1;|END)
@@ -132,6 +134,44 @@ S2D/SA/V1/sample_topic/C/1 -> RM|7-10;8-60;|END
 S2D/SA/V1/sample_topic/C/2 -> RM|1-mqtt.senzmate.com;2-mqtt_id_1;|END 
 S2D/SA/V1/sample_topic/C/3 -> RM|9-2S/SA/V1/new_topic/S;|END
 ```
+
+#### Sensor Data Label Configuration
+
+Sensor data label configuration is a part of the remote configuration, which is used to change the label corresponding to each sensor reading in the MQTT publish message. Since there are multiple sensors, the label configuration employs an indexing system in addition to the indexing used in the remote configuration. The remote config index for label config is 13, and on top of that, an index corresponds to each sensor. An example configuration is shown below:
+
+- **1** - SHT2x Temperature Sensor (e.g., RM|13-1:Temp,;|END)
+- **2** - SHT2x Humidity Sensor (e.g., RM|13-2:RH,;|END)
+- **3** - Soil Moisture and EC Sensor (e.g., RM|13-3:Moist_EC,;|END)
+- **4** - Irrometer (e.g., RM|13-4:Irro,;|END)
+- **5** - Light Intensity Sensor (e.g., RM|13-5:Light,;|END)
+- **6** - DS18B20 Soil Temperature Sensor (e.g., RM|13-6:Soil_Temp,;|END)
+- **7** - Device Battery Reading (e.g., RM|13-7:Battery,;|END)
+- **8** - Device Internal Temperature (e.g., RM|13-8:Int_Temp,;|END)
+- **9** - Device Signal Strength (e.g., RM|13-9:Signal,;|END)
+- **10** - Device Power Status (e.g., RM|13-10:Power,;|END)
+
+#### Sensor Reading Order Configuration
+
+Sensor Reading Order Configuration is a part of the remote configuration, which is used to change the order of sensor readings in the MQTT message. Each sensor corresponds to a unique number, and by specifying the desired order using these numbers in the remote config index 14, you can customize the sensor reading sequence. For example:
+
+```plaintext
+S2D/SA/V1/sample_topic/C/1 -> RM|14-1,2,6,7,;|END
+```
+
+In this example:
+
+- **1** - SHT2x Temperature Sensor
+- **2** - SHT2x Humidity Sensor
+- **3** - Soil Moisture and EC Sensor
+- **4** - Irrometer
+- **5** - Light Intensity Sensor
+- **6** - DS18B20 Soil Temperature Sensor
+- **7** - Device Battery Reading
+- **8** - Device Internal Temperature
+- **9** - Device Signal Strength
+- **10** - Device Power Status
+
+Based on the provided message, the MQTT message will arrange sensor readings in the following order: Temperature Sensor, Humidity Sensor, Soil Temperature, and Device Battery Reading. This configuration allows you to define the sequence of sensor readings in your MQTT messages as needed.
 
 By leveraging this remote configuration guide, you can efficiently adjust various parameters of the device's behavior and initiate FOTA updates through remote communication.
 

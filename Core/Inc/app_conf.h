@@ -30,6 +30,8 @@
 
 
 /*----------------------Sensor ConFiguration----------------------*/
+// Disable the sensors by commenting out the
+// corresponding sensor definition
 #define SHT2x_Temp_EN
 #define SHT2x_RH_EN
 #define Moist_EN
@@ -39,6 +41,21 @@
 #define DS18B20_Temp_EN
 #define Power_status_EN
 /*-------------------END of Sensor ConFiguration------------------*/
+
+
+/*-------------------Sensor Label ConFiguration-------------------*/
+// Please don't comment any of the definitions. Just edit the values
+#define SHT2x_Temp_LB "T"
+#define SHT2x_RH_LB "H"
+#define Moist_EC_LB "MEA4"
+#define Irro_LB "IRO"
+#define Light_LB "LIA1"
+#define DS18B20_Temp_LB "ST"
+#define Device_Battery_LB "B"
+#define Internal_temp_LB "IT"
+#define Signal_Strength_LB "SS"
+#define Power_Status_LB "PS"
+/*----------------END of Sensor Label ConFiguration---------------*/
 
 
 /*---------------------Main Flow ConFiguration--------------------*/
