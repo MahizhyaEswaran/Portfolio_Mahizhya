@@ -15,7 +15,7 @@ extern uint32_t software_version;
 
 // to set the url to the bl config block
 void set_fota_config(char *url, char *apn){
-	if(strstr(url,"senzmate")){
+	if(strstr(url,"senz")){
 		bl_config_block_init(&bl_config);
 		bl_config.is_fw_available = 1;
 		sprintf(bl_config.url, "%s", url);

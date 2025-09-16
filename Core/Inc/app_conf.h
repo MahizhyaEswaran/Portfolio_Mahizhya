@@ -15,7 +15,7 @@
 /*-----------------------MQTT ConFiguration-----------------------*/
 #define APN ""
 #define MQTT_HOST "52.24.122.165"
-#define MQTT_ID "dev_anistus_t2"
+#define MQTT_ID "QA1"
 #define MQTT_PORT 1883
 #define MQTT_USER "user"
 #define MQTT_PASS "user@pass"
@@ -23,9 +23,9 @@
 #define PING_TIME 0
 
 //#define IMEI_Topic
-#define PublishTopic "D2S/SA/V1/dev_anistus_t2/S"
+#define PublishTopic "D2S/SA/V1/QA1/S"
 //#define SubscribeTopic "sample_topic/#"
-#define RmConfTopic "S2D/SA/V1/dev_anistus_t2/C/#"
+#define RmConfTopic "S2D/SA/V1/QA1/C/#"
 /*--------------------END of MQTT ConFiguration-------------------*/
 
 
@@ -45,16 +45,16 @@
 
 /*-------------------Sensor Label ConFiguration-------------------*/
 // Please don't comment any of the definitions. Just edit the values
-#define SHT2x_Temp_LB "T"
-#define SHT2x_RH_LB "H"
-#define Moist_EC_LB "MEA4"
-#define Irro_LB "IRO"
-#define Light_LB "LIA1"
+//#define SHT2x_Temp_LB "T"
+//#define SHT2x_RH_LB "H"
+//#define Moist_EC_LB "MEA4"
+//#define Irro_LB "IRO"
+//#define Light_LB "LIA1"
 #define DS18B20_Temp_LB "ST"
-#define Device_Battery_LB "B"
-#define Internal_temp_LB "IT"
-#define Signal_Strength_LB "SS"
-#define Power_Status_LB "PS"
+//#define Device_Battery_LB "B"
+//#define Internal_temp_LB "IT"
+//#define Signal_Strength_LB "SS"
+//#define Power_Status_LB "PS"
 /*----------------END of Sensor Label ConFiguration---------------*/
 
 
