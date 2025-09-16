@@ -1,6 +1,9 @@
 # SenzAgro DigiPlant V3
 
+Hi im mals
 
+Hi 
+hi 
 ## Introduction
 
 The DigiPlant device is an environmental monitoring device equipped with multiple sensors, including temperature, humidity, soil moisture, electrical conductivity, light intensity, and soil temperature. Additionally, the device features an irrometer sensor. This device is designed to gather various environmental parameters and transmit them to an online server using MQTT through a GSM module. 
